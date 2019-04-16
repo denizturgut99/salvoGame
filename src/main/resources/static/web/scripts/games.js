@@ -11,7 +11,8 @@ let app = new Vue({
         currentPlayer: [],
         gamePlayerID: [],
         emailInput: "",
-        passInput: ""
+        passInput: "",
+        gpid: []
     },
     methods: {
         getAllData() {
@@ -24,12 +25,13 @@ let app = new Vue({
                     return response.json()
                 })
                 .then(function (gameJson) {
-              
-                
                     app.gameData = gameJson.games;
                     app.currentPlayer = gameJson.current;
                     app.getScores();
                     app.getFilteredPlayers();
+                    app.gamePlayerPage();
+//                    app.createGame();
+                    //                    app.checkRejoin();
                     //                    console.log(app.gameData);
                 })
                 .catch(error => console.log(error));
@@ -155,7 +157,6 @@ let app = new Vue({
                     credentials: 'include', //keeps you logged in
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
-
                     },
                     method: 'POST',
                     body: this.getBody({
@@ -208,6 +209,12 @@ let app = new Vue({
                         app.login();
                         console.log("ALL good!")
                     }
+                    //                    if (data.hasOwnProperty('error')) {
+                    //                        alert(data.error)
+                    //                    } else {
+                    //                        app.login();
+                    //                    }
+
                 })
                 .catch(function (error) {
                     console.log("oops something failed ", error);
@@ -230,7 +237,6 @@ let app = new Vue({
                 }
             }
             //            console.log(gamePlayer)
-
             for (let i = 0; i < gamePlayer.length; i++) {
                 if (current.id == gamePlayer[i].player.id) {
                     gamePlayerID.push(gamePlayer[i].id)
@@ -247,7 +253,34 @@ let app = new Vue({
                     matchingID = test[i].id
                 }
             }
-            return window.location = "http://localhost:8080/web/game.html?gp=" + matchingID;
+
+            return window.location = "/web/game.html?gp=" + matchingID;
+        },
+        checkRejoin(something) {
+            for (let j = 0; j < something.length; j++) {
+                if (this.currentPlayer.player == something[j].player.player) {
+                    return true;
+                }
+            }
+        },
+        createGame() {
+            let url = "/api/games";
+            
+            fetch(url, {
+                method:"POST"
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                app.gpid = data.gpid;
+                if(data.hasOwnProperty('error')) {
+                    alert(data.error)
+                } else {
+                    return window.location = "/web/game.html?gp=" + app.gpid;
+                }
+            })
+            .catch(error => console.log(error))
         }
     }
 

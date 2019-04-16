@@ -25,8 +25,7 @@ let table = new Vue({
                 .then(function (response) {
                     return response.json()
                 })
-                .then(function (gameJson) {
-                
+                .then(function (gameJson) {        
               
                 if(gameJson.hasOwnProperty('error')) {
                     alert(gameJson.error)
@@ -60,12 +59,12 @@ let table = new Vue({
             let playersInGame = document.getElementById("players");
 
             if (this.gameData.game.gamePlayer.length == 1) {
-                let playerOne = table.gameData.game.gamePlayer[0].player.player
+                let playerOne = table.userName[0].player.player
 
                 playersInGame.textContent = playerOne + "Awaiting for a player"
             } else {
-                let playerOne = table.gameData.game.gamePlayer[0].player.player;
-                let playerTwo = table.gameData.game.gamePlayer[1].player.player;
+                let playerOne = table.userName[0].player.player;
+                let playerTwo = table.userName[1].player.player;
                 //if the player id matches the gamePlayer id
 
                 //                console.log(table.gamePlayer)

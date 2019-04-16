@@ -42,7 +42,28 @@ public class SalvoController {
         //return gameRepository.findAll().stream().map(g -> autPlayer(g)).collect(toList());
     //}
 
-    @RequestMapping(path = "/api/players")
+    @RequestMapping(path="/api/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
+            if(authentication != null) {
+                //if there is a logged in player create a new game and save it into the game repo
+                Game game1 = new Game();
+                gameRepository.save(game1);
+
+                //if there is a logged in player get the logged player info no need to save it to repo as this player already exists
+                Player player1 = getLoggedPlayer(authentication);
+
+                //gamePlayer saves both game and player into the gamePlayer repo which includes important info for both games and players
+                GamePlayer gamePlayer = new GamePlayer(game1, player1);
+                gamePlayerRepository.save(gamePlayer);
+
+                return new ResponseEntity<>(checkInfo("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+
+            } else {
+                return new ResponseEntity<>(checkInfo("error", "Please Log-In to be able to create games."), HttpStatus.UNAUTHORIZED);
+            }
+    }
+
+    @RequestMapping(path = "/api/players", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(@RequestBody Player player) {
         if (player.getUserName().isEmpty() || player.getPassword().isEmpty()) {
             return new ResponseEntity<>("No name given", HttpStatus.FORBIDDEN);

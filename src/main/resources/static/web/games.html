@@ -10,8 +10,8 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
+   
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,9 +49,10 @@
         <div class="container">
 
             <h2>Games</h2>
+            <button type="button" v-on:click="createGame()" class="btn btn-warning">CREATE GAME</button>
             <ol v-if="gameData.length > 0">
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.gamePlayer[0].player.player}} vs is awaiting for a player <button class=".btn-success">JOIN</button> </li>
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button v-on:click="createLink(game.gamePlayer)" class=".btn-success"> REJOIN</button> </li>
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.gamePlayer[0].player.player}} vs is awaiting for a player <a v-if="currentPlayer != 'guest'" class="btn btn-outline-success">JOIN</a> </li>
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button id="gameCheck" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success"> REJOIN </button> </li>
             </ol>
 
             <div class="modal fade" id="signUP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -129,7 +130,8 @@
                         <th>Matches Played</th>
                     </tr>
                 </thead>
-                <tbody v-for="player in leaderBoard">
+                <tbody >
+                   <tr v-for="player in leaderBoard">
                     <td>
                         {{player.name}}
                     </td>
@@ -148,6 +150,7 @@
                     <td>
                         {{player.all}}
                     </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

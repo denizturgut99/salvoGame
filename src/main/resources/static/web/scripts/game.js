@@ -31,16 +31,18 @@ let table = new Vue({
                     alert(gameJson.error)
                     history.go(-1)
                 }
+                console.log("after fetch")
                     table.gameData = gameJson;
                     table.shipLocs = gameJson.game.ships;
                     table.salvoLocs = gameJson.game.MySalvoes;
                     table.oppSalvoLocs = gameJson.game.OpponentSalvoes;
                     table.userName = gameJson.game.gamePlayer;
+                    table.showPlayers();
+                    table.gameVersus();
                     table.showShips();
                     table.showSalvoes();
                     table.showOpponentSalvoes();
-                    table.showPlayers();
-                    table.gameVersus();
+                    
                 })
                 .catch(error => console.log(error));
         },
@@ -60,8 +62,9 @@ let table = new Vue({
 
             if (this.gameData.game.gamePlayer.length == 1) {
                 let playerOne = table.userName[0].player.player
+                let playerTwo = "Awaiting for a player";
 
-                playersInGame.textContent = playerOne + "Awaiting for a player"
+                playersInGame.textContent = playerOne + "(YOU) vs " + playerTwo
             } else {
                 let playerOne = table.userName[0].player.player;
                 let playerTwo = table.userName[1].player.player;
@@ -70,6 +73,7 @@ let table = new Vue({
                 //                console.log(table.gamePlayer)
 
                 if (table.gameData.game.gamePlayer[0].id == this.linkID) {
+                    
                     playersInGame.textContent = playerOne + "(YOU) vs " + playerTwo;
                 } else {
                     playersInGame.textContent = playerTwo + "(YOU) vs " + playerOne;

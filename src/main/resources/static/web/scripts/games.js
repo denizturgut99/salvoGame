@@ -12,7 +12,9 @@ let app = new Vue({
         gamePlayerID: [],
         emailInput: "",
         passInput: "",
-        gpid: []
+        gpid: [],
+        test:[],
+        newGPID: []
     },
     methods: {
         getAllData() {
@@ -30,7 +32,8 @@ let app = new Vue({
                     app.getScores();
                     app.getFilteredPlayers();
                     app.gamePlayerPage();
-//                    app.createGame();
+//                    app.joinGame();
+                    //                    app.createGame();
                     //                    app.checkRejoin();
                     //                    console.log(app.gameData);
                 })
@@ -236,7 +239,7 @@ let app = new Vue({
                     gamePlayer.push(gameID[i][j])
                 }
             }
-            //            console.log(gamePlayer)
+//                        console.log(gamePlayer)
             for (let i = 0; i < gamePlayer.length; i++) {
                 if (current.id == gamePlayer[i].player.id) {
                     gamePlayerID.push(gamePlayer[i].id)
@@ -265,17 +268,39 @@ let app = new Vue({
         },
         createGame() {
             let url = "/api/games";
+
+            fetch(url, {
+                    method: "POST"
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    app.gpid = data.gpid;
+                    if (data.hasOwnProperty('error')) {
+                        alert(data.error)
+                    } else {
+                        return window.location = "/web/game.html?gp=" + app.gpid;
+                    }
+                })
+                .catch(error => console.log(error))
+        },
+        joinGame() {
+            let element = document.getElementById("joinButton");         
+            element.dataset.game
+            console.log(element.dataset.game)
+//            return window.location = "/web/game.html?gp=" + element.dataset.game;
+            let url = "/api/game/" + element.dataset.game + "/players"
             
             fetch(url, {
-                method:"POST"
+                method:"POST",
             })
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(data) {
-                app.gpid = data.gpid;
-                if(data.hasOwnProperty('error')) {
-                    alert(data.error)
+            .then(function (gameJson) {
+                if(gameJson.hasOwnProperty('error')) {
+                    alert(gameJson.error)
                 } else {
                     return window.location = "/web/game.html?gp=" + app.gpid;
                 }

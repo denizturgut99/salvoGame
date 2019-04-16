@@ -1,0 +1,17 @@
+body {
+    background-image: url(warships.jpeg);
+    background-size: cover;
+}
+
+table {
+    table-layout: fixed;
+}
+
+table td {
+    background-color: rgba(0, 0, 255, 0.3);
+    color: white;
+}
+
+input:invalid {
+    border-bottom: 2px solid red;
+}

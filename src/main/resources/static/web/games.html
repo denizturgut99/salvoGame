@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Salvo Leaderboard</title>
+    <link rel="stylesheet" href="./styles/games.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div id="app">
+
+        <nav class="navbar navbar-dark bg-primary">
+            <div v-if="currentPlayer == `guest`">
+                <div class="text-center">
+                    <a class="btn btn-outline-warning" data-toggle="modal" data-target="#signIN"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+
+                    <a class="btn btn-outline-success" data-toggle="modal" data-target="#signUP"><i class="fas fa-user-plus"></i>Sign Up</a>
+                </div>
+            </div>
+            <div v-else>
+                <form v-on:click="logout()" id="logout-form" onsubmit="return false">
+                    <a class="btn btn-outline-warning"><i class="fas fa-sign-out-alt"></i>Sign Out</a>
+                </form>
+            </div>
+        </nav>
+
+        <div v-if="currentPlayer != 'guest'">
+                You're logged in as {{currentPlayer.player}}
+        </div>
+        
+        <div class="container">
+
+            <h2>Games</h2>
+            <ol v-if="gameData.length > 0">
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.gamePlayer[0].player.player}} vs is awaiting for a player <button class=".btn-success">JOIN</button> </li>
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button v-on:click="createLink(game.gamePlayer)" class=".btn-success"> REJOIN</button> </li>
+            </ol>
+
+            <div class="modal fade" id="signUP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Sign Up</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="login-form" onsubmit="return false" action="/api/players">
+                            <div class="modal-body mx-3">
+                                <div class="md-form">
+                                    <i class="fas fa-envelope prefix grey-text">UserName or Email</i>
+                                    <input id="email1" type="text" class="form-control validate" v-model="emailInput">
+                                    <label data-error="wrong" data-success="right" for="email1"></label>
+                                </div>
+
+                                <div class="md-form">
+                                    <i class="fas fa-lock prefix grey-text">Password</i>
+                                    <input id="pass1" type="password" class="form-control validate" v-model="passInput">
+                                    <label data-error="wrong" data-success="right" for="pass1"></label>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button v-on:click="signup()" class="btn btn-default">Sign Up</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="signIN" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="" id="form-login" onsubmit="return false">
+                            <div class="modal-body mx-3">
+                                <div class="md-form">
+                                    <i class="fas fa-envelope prefix grey-text">UserName or Email</i>
+                                    <input type="text" id="email" class="form-control validate" v-model="emailInput">
+                                    <label data-error="wrong" data-success="right" for="email"></label>
+                                </div>
+
+                                <div class="md-form">
+                                    <i class="fas fa-lock prefix grey-text">Password</i>
+                                    <input type="password" id="pass" class="form-control validate" v-model="passInput">
+                                    <label data-error="wrong" data-success="right" for="pass"></label>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button v-on:click="login()" class="btn btn-default">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Points</th>
+                        <th>Won</th>
+                        <th>Tied</th>
+                        <th>Lost</th>
+                        <th>Matches Played</th>
+                    </tr>
+                </thead>
+                <tbody v-for="player in leaderBoard">
+                    <td>
+                        {{player.name}}
+                    </td>
+                    <td>
+                        {{player.pts}}
+                    </td>
+                    <td>
+                        {{player.win}}
+                    </td>
+                    <td>
+                        {{player.tie}}
+                    </td>
+                    <td>
+                        {{player.lose}}
+                    </td>
+                    <td>
+                        {{player.all}}
+                    </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="./scripts/games.js"></script>
+    <script src="./scripts/modal.js"></script>
+</body>
+
+</html>

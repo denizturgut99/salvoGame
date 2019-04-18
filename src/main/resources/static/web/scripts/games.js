@@ -31,11 +31,6 @@ let app = new Vue({
                     app.currentPlayer = gameJson.current;
                     app.getScores();
                     app.getFilteredPlayers();
-                    app.gamePlayerPage();
-//                    app.joinGame();
-                    //                    app.createGame();
-                    //                    app.checkRejoin();
-                    //                    console.log(app.gameData);
                 })
                 .catch(error => console.log(error));
         },
@@ -223,31 +218,6 @@ let app = new Vue({
                     console.log("oops something failed ", error);
                 })
         },
-        gamePlayerPage() {
-            let current = app.currentPlayer;
-            let data = app.gameData;
-            let gameID = [];
-            let gamePlayer = [];
-            let gamePlayerID = [];
-
-            for (let i = 0; i < data.length; i++) {
-                gameID.push(data[i].gamePlayer)
-            }
-
-            for (let i = 0; i < gameID.length; i++) {
-                for (let j = 0; j < gameID[i].length; j++) {
-                    gamePlayer.push(gameID[i][j])
-                }
-            }
-//                        console.log(gamePlayer)
-            for (let i = 0; i < gamePlayer.length; i++) {
-                if (current.id == gamePlayer[i].player.id) {
-                    gamePlayerID.push(gamePlayer[i].id)
-                }
-            }
-            //            console.log(gamePlayerID)
-            app.gamePlayerID.push(gamePlayerID);
-        },
         createLink(test) {
             let matchingID = [];
 
@@ -260,6 +230,7 @@ let app = new Vue({
             return window.location = "/web/game.html?gp=" + matchingID;
         },
         checkRejoin(something) {
+            //if the current player is the same as the player in the game the rejoin button is shown, else the join button stays in the screen
             for (let j = 0; j < something.length; j++) {
                 if (this.currentPlayer.player == something[j].player.player) {
                     return true;
@@ -285,12 +256,9 @@ let app = new Vue({
                 })
                 .catch(error => console.log(error))
         },
-        joinGame() {
-            let element = document.getElementById("joinButton");         
-            element.dataset.game
-            console.log(element.dataset.game)
-//            return window.location = "/web/game.html?gp=" + element.dataset.game;
-            let url = "/api/game/" + element.dataset.game + "/players"
+        joinGame(event) {
+
+            let url = "/api/game/" + event.target.id + "/players"
             
             fetch(url, {
                 method:"POST",
@@ -302,7 +270,7 @@ let app = new Vue({
                 if(gameJson.hasOwnProperty('error')) {
                     alert(gameJson.error)
                 } else {
-                    return window.location = "/web/game.html?gp=" + app.gpid;
+                    return window.location = "/web/game.html?gp=" + gameJson.gpid;
                 }
             })
             .catch(error => console.log(error))

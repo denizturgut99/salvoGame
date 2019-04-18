@@ -51,8 +51,10 @@
             <h2>Games</h2>
             <button type="button" v-on:click="createGame()" class="btn btn-warning">CREATE GAME</button>
             <ol v-if="gameData.length > 0">
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.id}} {{game.gamePlayer[0].player.player}} vs is awaiting for a player <button id="joinButton" :data-game="game.id" type="button" v-if="currentPlayer != 'guest'" v-on:click="joinGame()" class="btn btn-outline-success">JOIN</button> </li>
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.id}} {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button data-game="game.id" type="button" id="gameCheck" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success">REJOIN</button></li>
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.id}} {{game.date}} {{game.gamePlayer[0].player.player}} vs is awaiting for a player <button :id="game.id" type="button" v-if="currentPlayer.player != game.gamePlayer[0].player.player" v-on:click="joinGame" class="btn btn-outline-success">JOIN</button>
+                <button type="button" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success">REJOIN</button>
+                 </li>
+                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.id}} {{game.date}} {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button data-game="game.id" type="button" id="gameCheck" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success">REJOIN</button></li>
             </ol>
 
             <div class="modal fade" id="signUP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

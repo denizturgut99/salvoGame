@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
@@ -46,7 +48,7 @@ public class SalvoController {
     public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
             if(authentication != null) {
                 //if there is a logged in player create a new game and save it into the game repo
-                Game game1 = new Game();
+                Game game1 = new Game(LocalDateTime.now());
                 gameRepository.save(game1);
 
                 //if there is a logged in player get the logged player info no need to save it to repo as this player already exists
@@ -71,11 +73,19 @@ public class SalvoController {
             Player player1 = getLoggedPlayer(authentication);
             Game game1 = gameRepository.getOne(gameID);
 
+            //forEach loop to go over all of the gameplayers and current player(s) in game
+            for(GamePlayer gamePlayer : game1.getGamePlayers()) {
+                //if the player in gameplayer is equal to the current player, an error message is returned and the user is not allowed to join the game again
+                if(gamePlayer.getPlayer().equals(player1)) {
+                    return new ResponseEntity<>(checkInfo("error", "You're already in this game"), HttpStatus.CONFLICT);
+                }
+            }
+
             if(game1 == null) {
                 return new ResponseEntity<>(checkInfo("error", "Sorry, this game doesn't exist"), HttpStatus.FORBIDDEN);
             }
 
-            if(game1.getGamePlayers().size() != 1) {
+            if(game1.getGamePlayers().size() == 2) {
                 return new ResponseEntity<>(checkInfo("error", "Game is full"), HttpStatus.FORBIDDEN);
             }
 

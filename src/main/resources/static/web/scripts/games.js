@@ -14,7 +14,6 @@ let app = new Vue({
         passInput: "",
         gpid: [],
         test:[],
-        newGPID: []
     },
     methods: {
         getAllData() {
@@ -163,8 +162,8 @@ let app = new Vue({
                     })
                 })
                 .then(function (data) {
-                    if (data.status >= 400) {
-                        alert("Please check your UserName/Email and password")
+                    if (data.hasOwnProperty('error')) {
+                        alert(data.error)
                     } else {
                         location.reload(true)
                         console.log("ALL good!")

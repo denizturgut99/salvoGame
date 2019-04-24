@@ -23,3 +23,19 @@ table {
 .last {
     margin-bottom: 50px;
 }
+
+.gameTable .shipColor {
+    background-color: red ;
+}
+
+.gameTable .empty {
+    background-image: url(water.jpeg)
+}
+
+.gameTable .entering {
+    background-color: green;
+}
+
+.gameTable .invisible {
+    display: none;
+}

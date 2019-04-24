@@ -137,6 +137,10 @@ public class SalvoApplication {
 			gp1.addShip(sh2);
 			Ship sh3 = new Ship("Patrol Boat", loc3);
 			gp1.addShip(sh3);
+			Ship sh30 = new Ship("Patrol Boat", loc8);
+			gp1.addShip(sh30);
+			Ship sh31 = new Ship("Submarine", loc7);
+			gp1.addShip(sh31);
 
 			Ship sh4 = new Ship("Destroyer", loc4);
 			gp2.addShip(sh4);
@@ -233,6 +237,8 @@ public class SalvoApplication {
 			shipRepository.save(sh27);
 			shipRepository.save(sh28);
 			shipRepository.save(sh29);
+			shipRepository.save(sh30);
+			shipRepository.save(sh31);
 
 			//SALVO LOCATIONS
 			List<String> salvoLoc1 = Arrays.asList("B5", "C5", "F1");

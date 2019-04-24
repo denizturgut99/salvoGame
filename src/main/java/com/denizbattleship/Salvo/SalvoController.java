@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,41 @@ public class SalvoController {
             } else {
                 return new ResponseEntity<>(checkInfo("error", "Please Log-In to be able to create games."), HttpStatus.UNAUTHORIZED);
             }
+    }
+
+    @RequestMapping(path="/api/games/players/{gamePlayerID}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> playerShips(@PathVariable Long gamePlayerID, Authentication authentication, @RequestBody Set<Ship> ships) {
+        if(authentication == null) {
+            return new ResponseEntity<>(checkInfo("error", "You need to be logged in to place ships"), HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerID);
+        Player currentPlayer = getLoggedPlayer(authentication);
+
+        if(gamePlayer.getPlayer().getId() != currentPlayer.getId()) {
+            return new ResponseEntity<>(checkInfo("error", "You can't place ships for someone else!"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer.getId() == null) {
+            return new ResponseEntity<>(checkInfo("error", "Such game player doesn't exist."), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer.getShip().size() >= 5) {
+            return new ResponseEntity<>(checkInfo("error", "You can only place 5 ships!"), HttpStatus.FORBIDDEN);
+        }
+
+        if (ships.size() != 5) {
+            return new ResponseEntity<>(checkInfo("error", "Wrong number of ships!"), HttpStatus.FORBIDDEN);
+        } else {
+
+            for(Ship ship : ships){
+                gamePlayer.addShip(ship);
+                shipRepository.save(ship);
+            }
+
+            return new ResponseEntity<>(checkInfo("OK", "Ships are saved."), HttpStatus.CREATED);
+
+        }
     }
 
     @RequestMapping(path="/api/game/{gameID}/players", method = RequestMethod.POST)

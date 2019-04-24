@@ -16,6 +16,7 @@ let table = new Vue({
         oppID: [],
         oppSalvoLocs: [],
         playerShips: [],
+        shipLength: null,
         shipPositions: [{
                 type: "Carrier",
                 locations: [],
@@ -57,7 +58,6 @@ let table = new Vue({
                         alert(gameJson.error)
                         history.go(-1)
                     }
-                    console.log("after fetch")
                     table.gameData = gameJson;
                     table.shipLocs = gameJson.game.ships;
                     table.salvoLocs = gameJson.game.MySalvoes;
@@ -120,56 +120,77 @@ let table = new Vue({
                 for (let j = 0; j < locs.length; j++) {
                     //                    document.getElementById(locs[j]).style.backgroundColor = "red";
                     document.getElementById(locs[j]).classList.add("shipColor");
+                    document.getElementById(locs[j]).setAttribute('data-shipLength', locs.length);
+
                     document.getElementById(locs[j]).setAttribute("draggable", "true");
 
                     if (document.getElementById(locs[j]).classList.contains("shipColor")) {
                         document.getElementById(locs[j]).classList.remove("empty");
                     }
 
-                    //                    let empties = document.getElementsByClassName("empty");
-                    //                    let filled = document.getElementsByClassName("shipColor");
-                    //
-                    //                    for (let empty of empties) {
-                    //                        empty.addEventListener("dragover", dragOver);
-                    //                        empty.addEventListener("dragenter", dragEnter);
-                    //                        empty.addEventListener("dragleave", dragLeave);
-                    //                        empty.addEventListener("drop", dragDrop);
-                    //                    }
-                    //
-                    //                    for (let fill of filled) {
-                    //                        fill.addEventListener("dragstart", dragStart);
-                    //                        fill.addEventListener("dragend", dragEnd);
-                    //                    }
-                    //
-                    //                    function dragStart() {
-                    //                        setTimeout(() => (this.classList.remove("shipColor")), 0);
-                    //                    }
-                    //
-                    //                    function dragEnd() {
-                    //                        this.className = "shipColor";
-                    //                    }
-                    //
-                    //                    function dragOver(e) {
-                    //                        e.preventDefault();
-                    //                    }
-                    //
-                    //                    function dragEnter(e) {
-                    //                        e.preventDefault();
-                    //                        this.className = "entering";
-                    //                    }
-                    //
-                    //                    function dragLeave() {
-                    //                        this.className = "empty";
-                    //                    }
-                    //
-                    //                    function dragDrop() {
-                    //                      this.clasName = "empty";
-                    //                        this.append(filled);
-                    //                    }
+                    let empties = document.getElementsByClassName("empty");
+                    let filled = document.getElementsByClassName("shipColor");
+
+                    for (let empty of empties) {
+                        empty.addEventListener("dragover", this.dragOver);
+                        empty.addEventListener("dragenter", this.dragEnter);
+                        empty.addEventListener("dragleave", this.dragLeave);
+                        empty.addEventListener("drop", this.dragDrop);
+                    }
+
+                    for (let fill of filled) {
+                        fill.addEventListener("dragstart", this.dragStart);
+                        fill.addEventListener("dragend", this.dragEnd);
+                    }
+
 
                 }
             }
         },
+        dragStart(e) {
+            console.log("START", e.target.id);
+            let letter = e.target.id.substr(0, 1);
+            let number = e.target.id.substr(1, 2);
+
+            console.log(letter)
+            console.log(number)
+            //            e.target.classList.remove("shipColor")
+            //            e.target.classList.add("empty")
+
+            this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
+            console.log(this.shipLength)
+
+            for (let i = 0; i < this.shipLength; i++) {
+                let newID = letter + (Number(number) + i)
+//                console.log(newID)
+            }
+        },
+
+        dragEnd(e) {
+            console.log("END", e.target.id);
+        },
+
+        dragOver(e) {
+            e.preventDefault();
+            console.log("OVER", e.target.id);
+        },
+
+        dragEnter(e) {
+            e.preventDefault();
+            console.log("ENTER", e.target.id);
+        },
+
+        dragLeave(e) {
+            console.log("LEAVE", e.target.id);
+        },
+
+
+        dragDrop(e) {
+            console.log("DROP", e.target.id);
+            e.target.classList.add("shipColor")
+            e.target.classList.remove("empty")
+        },
+
         showSalvoes() {
             let salvoes = table.salvoLocs;
             //            console.log(salvoes);

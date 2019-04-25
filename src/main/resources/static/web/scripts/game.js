@@ -154,15 +154,26 @@ let table = new Vue({
 
             console.log(letter)
             console.log(number)
-            //            e.target.classList.remove("shipColor")
-            //            e.target.classList.add("empty")
+
+            //e.target.classList.remove("shipColor")
+            //e.target.classList.add("empty")
 
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
-            console.log(this.shipLength)
+//            console.log(this.shipLength)
+
+            let allIDs = []
 
             for (let i = 0; i < this.shipLength; i++) {
-                let newID = letter + (Number(number) + i)
-//                console.log(newID)
+                let newID = letter + (Number(number) + i);
+                allIDs.push(newID)
+                //                console.log(newID)
+
+                //                console.log(document.getElementById(newID))
+            }
+                        console.log(allIDs)
+            for (let i = 0; i < allIDs.length; i++) {
+                document.getElementById(allIDs[i]).classList.remove("shipColor")
+                document.getElementById(allIDs[i]).classList.add("empty")
             }
         },
 
@@ -171,6 +182,7 @@ let table = new Vue({
         },
 
         dragOver(e) {
+            //dragOver is necessary otherwise the ship goes back to its original place
             e.preventDefault();
             console.log("OVER", e.target.id);
         },
@@ -178,17 +190,50 @@ let table = new Vue({
         dragEnter(e) {
             e.preventDefault();
             console.log("ENTER", e.target.id);
+            //show the ships here
+            //            e.target.classList.add("shipColor")
+            //            e.target.classList.remove("empty")
         },
 
         dragLeave(e) {
             console.log("LEAVE", e.target.id);
+            //remove the ships here
+            e.target.classList.remove("shipColor")
+            e.target.classList.add("empty")
         },
 
 
         dragDrop(e) {
             console.log("DROP", e.target.id);
-            e.target.classList.add("shipColor")
-            e.target.classList.remove("empty")
+
+            let shipCellID = e.target.id;
+            console.log(shipCellID)
+
+            let letter = shipCellID.substr(0, 1);
+            let number = shipCellID.substr(1, 2);
+
+//            this.shipLength = document.getElementById(shipCellID).getAttribute("data-shipLength");
+            console.log(this.shipLength);
+
+            let allIDs = []
+
+            for (let i = 0; i < this.shipLength; i++) {
+                let newID = letter + (Number(number) + i)
+                //                console.log(newID)
+                allIDs.push(newID)
+            }
+
+            console.log(allIDs)
+
+            for (let i = 0; allIDs.length; i++) {
+                document.getElementById(allIDs[i]).classList.add("shipColor")
+               document.getElementById(allIDs[i]).classList.remove("empty")
+            }
+            
+
+//            e.target.classList.add("shipColor")
+//            e.target.classList.remove("empty")
+
         },
 
         showSalvoes() {

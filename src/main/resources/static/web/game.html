@@ -35,10 +35,10 @@
             </div>
         </div>
         <div>
-            <button type="button" class="btn btn-success" v-on:click="getPlayerShips()">Ships Ready!</button>
+            <button type="button" class="btn btn-success" v-on:click="getPlayerShips()">Place Ships!</button>
         </div>
         <div><h2>Your Ships</h2>
-            <div v-for="ship in shipLocs"> {{ship.type}} </div>        
+            <div v-for="ship in shipLocs"> {{ship.type}} {{ship.location}} </div>        
         </div>
     </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>

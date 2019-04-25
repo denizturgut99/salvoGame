@@ -17,6 +17,7 @@ let table = new Vue({
         oppSalvoLocs: [],
         playerShips: [],
         shipLength: null,
+        shipType: "",
         shipPositions: [{
                 type: "Carrier",
                 locations: [],
@@ -115,14 +116,19 @@ let table = new Vue({
 
             for (let i = 0; i < ships.length; i++) {
                 let locs = ships[i].location;
+                let types = ships[i].type;
+//                console.log(types)
                 //                console.log(locs)
 
                 for (let j = 0; j < locs.length; j++) {
                     //                    document.getElementById(locs[j]).style.backgroundColor = "red";
                     document.getElementById(locs[j]).classList.add("shipColor");
                     document.getElementById(locs[j]).setAttribute('data-shipLength', locs.length);
+                    document.getElementById(locs[j]).setAttribute('data-shipType', types);
 
-                    document.getElementById(locs[j]).setAttribute("draggable", "true");
+                    if(j == 0) {
+                        document.getElementById(locs[j]).setAttribute("draggable", "true");
+                    }
 
                     if (document.getElementById(locs[j]).classList.contains("shipColor")) {
                         document.getElementById(locs[j]).classList.remove("empty");
@@ -155,11 +161,9 @@ let table = new Vue({
             console.log(letter)
             console.log(number)
 
-            //e.target.classList.remove("shipColor")
-            //e.target.classList.add("empty")
-
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
-//            console.log(this.shipLength)
+            this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
+            //            console.log(this.shipLength)
 
             let allIDs = []
 
@@ -170,9 +174,10 @@ let table = new Vue({
 
                 //                console.log(document.getElementById(newID))
             }
-                        console.log(allIDs)
+            console.log(allIDs)
             for (let i = 0; i < allIDs.length; i++) {
-                document.getElementById(allIDs[i]).classList.remove("shipColor")
+                document.getElementById(allIDs[i]).classList.remove("shipColor");
+                document.getElementById(allIDs[i]).removeAttribute("draggable");
                 document.getElementById(allIDs[i]).classList.add("empty")
             }
         },
@@ -197,9 +202,25 @@ let table = new Vue({
 
         dragLeave(e) {
             console.log("LEAVE", e.target.id);
+            let letter = e.target.id.substr(0, 1);
+            let number = e.target.id.substr(1, 2);
             //remove the ships here
-            e.target.classList.remove("shipColor")
-            e.target.classList.add("empty")
+
+            let allIDs = []
+
+            for (let i = 0; i < this.shipLength; i++) {
+                let newID = letter + (Number(number) + i);
+                allIDs.push(newID)
+            }
+            // console.log(allIDs)
+            for (let i = 0; i < allIDs.length; i++) {
+                document.getElementById(allIDs[i]).classList.remove("shipColor");
+                document.getElementById(allIDs[i]).removeAttribute("draggable");
+                document.getElementById(allIDs[i]).classList.add("empty")
+            }
+
+            // e.target.classList.remove("shipColor")
+            // e.target.classList.add("empty")
         },
 
 
@@ -209,11 +230,14 @@ let table = new Vue({
             let shipCellID = e.target.id;
             console.log(shipCellID)
 
+            let types = table.shipLocs;
+            
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
 
-//            this.shipLength = document.getElementById(shipCellID).getAttribute("data-shipLength");
+            //            this.shipLength = document.getElementById(shipCellID).getAttribute("data-shipLength");
             console.log(this.shipLength);
+            console.log(this.shipType);
 
             let allIDs = []
 
@@ -225,14 +249,24 @@ let table = new Vue({
 
             console.log(allIDs)
 
-            for (let i = 0; allIDs.length; i++) {
+            for (let i = 0; i < allIDs.length; i++) {
                 document.getElementById(allIDs[i]).classList.add("shipColor")
-               document.getElementById(allIDs[i]).classList.remove("empty")
+                document.getElementById(allIDs[i]).classList.remove("empty")
+                document.getElementById(allIDs[0]).setAttribute("draggable", "true");
+                document.getElementById(allIDs[i]).getAttribute("data-shipLength");
+                document.getElementById(allIDs[i]).getAttribute("data-shipType");
+                
+                for(let y = 0; y < types.length; y++) {
+                    if(this.shipType == types[y].type) {
+                        types[y].location = allIDs
+                    }
+                }
             }
             
+//            table.shipLocs = allIDs
 
-//            e.target.classList.add("shipColor")
-//            e.target.classList.remove("empty")
+            //            e.target.classList.add("shipColor")
+            //            e.target.classList.remove("empty")
 
         },
 

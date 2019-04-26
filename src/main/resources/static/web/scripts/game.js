@@ -163,7 +163,7 @@ let table = new Vue({
 
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
             this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
-            //            console.log(this.shipLength)
+                       console.log(this.shipLength)
 
             let allIDs = []
 
@@ -171,14 +171,15 @@ let table = new Vue({
                 let newID = letter + (Number(number) + i);
                 allIDs.push(newID)
                 //                console.log(newID)
-
                 //                console.log(document.getElementById(newID))
             }
             console.log(allIDs)
             for (let i = 0; i < allIDs.length; i++) {
                 document.getElementById(allIDs[i]).classList.remove("shipColor");
-                document.getElementById(allIDs[i]).removeAttribute("draggable");
-                document.getElementById(allIDs[i]).classList.add("empty")
+                document.getElementById(allIDs[0]).removeAttribute("draggable");
+                document.getElementById(allIDs[i]).removeAttribute("data-shipLength");
+                document.getElementById(allIDs[i]).removeAttribute("data-shipType");
+                document.getElementById(allIDs[i]).classList.add("empty");
             }
         },
 
@@ -214,13 +215,11 @@ let table = new Vue({
             }
             // console.log(allIDs)
             for (let i = 0; i < allIDs.length; i++) {
-                document.getElementById(allIDs[i]).classList.remove("shipColor");
                 document.getElementById(allIDs[i]).removeAttribute("draggable");
-                document.getElementById(allIDs[i]).classList.add("empty")
+                document.getElementById(allIDs[i]).removeAttribute("data-shiplength");
+                document.getElementById(allIDs[i]).removeAttribute("data-shiptype");
+                document.getElementById(allIDs[i]).classList.add("empty");
             }
-
-            // e.target.classList.remove("shipColor")
-            // e.target.classList.add("empty")
         },
 
 
@@ -248,13 +247,16 @@ let table = new Vue({
             }
 
             console.log(allIDs)
+            
+            //            console.log(ships);
 
             for (let i = 0; i < allIDs.length; i++) {
                 document.getElementById(allIDs[i]).classList.add("shipColor")
                 document.getElementById(allIDs[i]).classList.remove("empty")
                 document.getElementById(allIDs[0]).setAttribute("draggable", "true");
-                document.getElementById(allIDs[i]).getAttribute("data-shipLength");
-                document.getElementById(allIDs[i]).getAttribute("data-shipType");
+                document.getElementById(allIDs[0]).addEventListener("dragstart", this.dragStart);
+                document.getElementById(allIDs[i]).setAttribute("data-shipLength", allIDs.length);
+                // document.getElementById(allIDs[i]).getAttribute("data-shipType");
                 
                 for(let y = 0; y < types.length; y++) {
                     if(this.shipType == types[y].type) {
@@ -403,23 +405,28 @@ let table = new Vue({
                     method: "POST",
                     body: JSON.stringify([{
                             "type": "Carrier",
-                            "locations": ["A1", "B1", "C1", "D1", "E1"]
+                            "locations": ["A1", "B1", "C1", "D1", "E1"],
+                            "length": 5
                        },
                         {
                             "type": "Submarine",
-                            "locations": ["H5", "H6", "H7"]
+                            "locations": ["H5", "H6", "H7"],
+                            "length": 3
                        },
                         {
                             "type": "Battleship",
-                            "locations": ["A5", "A6", "A7", "A8"]
+                            "locations": ["A5", "A6", "A7", "A8"],
+                            "length": 4
                                      },
                         {
                             "type": "Patrol boat",
-                            "locations": ["E5", "E6"]
+                            "locations": ["E5", "E6"],
+                            "length": 2
                                          },
                         {
                             "type": "Destroyer",
-                            "locations": ["C3", "B3", "A3"]
+                            "locations": ["C3", "B3", "A3"],
+                            "length": 3
                                      }
 
                                ])

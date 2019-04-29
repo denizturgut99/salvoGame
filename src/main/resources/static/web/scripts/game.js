@@ -18,6 +18,7 @@ let table = new Vue({
         playerShips: [],
         shipLength: null,
         shipType: "",
+        allIDs: [],
         fullCell: false,
         shipPositions: [{
                 type: "Carrier",
@@ -167,22 +168,20 @@ let table = new Vue({
             this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
             console.log(this.shipLength)
 
-            let allIDs = []
-
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i);
-                allIDs.push(newID)
+                table.allIDs.push(newID)
                 //                console.log(newID)
                 //                console.log(document.getElementById(newID))
             }
-            console.log(allIDs)
-            for (let i = 0; i < allIDs.length; i++) {
-                document.getElementById(allIDs[i]).removeAttribute("class");
-                console.log("END", document.getElementById(allIDs[i]));
-                document.getElementById(allIDs[0]).removeAttribute("draggable");
-                document.getElementById(allIDs[i]).removeAttribute("data-shipLength");
-                document.getElementById(allIDs[i]).removeAttribute("data-shipType");
-                document.getElementById(allIDs[i]).classList.add("empty");
+            // console.log(allIDs)
+            for (let i = 0; i < table.allIDs.length; i++) {
+                document.getElementById(table.allIDs[i]).removeAttribute("class");
+                console.log("END", document.getElementById(table.allIDs[i]));
+                document.getElementById(table.allIDs[0]).removeAttribute("draggable");
+                document.getElementById(table.allIDs[i]).removeAttribute("data-shipLength");
+                document.getElementById(table.allIDs[i]).removeAttribute("data-shipType");
+                document.getElementById(table.allIDs[i]).classList.add("empty");
             }
         },
 
@@ -211,14 +210,14 @@ let table = new Vue({
                 allIDs.push(newID)
             }
 
-            // for (let i = 0; i < allIDs.length; i++) {
+            for (let i = 0; i < allIDs.length; i++) {
 
-            //     if(document.getElementById(allIDs[i]).classList.contains("shipColor")) {
-            //         table.fullCell = true;
-            //         document.getElementById(allIDs[i]).classList.add("notAllowed")
-            //     }
+                if(document.getElementById(allIDs[i]).classList.contains("notAllowed")) {
+                    console.log("hello")
+                    table.fullCell = true;
+                }
 
-            // }
+            }
             console.log(allIDs)
 
         },
@@ -268,7 +267,7 @@ let table = new Vue({
             // console.log(allIDs)
             // if(table.fullCell = false) {
             for (let i = 0; i < allIDs.length; i++) {
-                if (!document.getElementById(allIDs[i]).classList.contains("notAllowed")) {
+                if (!document.getElementById(allIDs[i]).classList.contains("notAllowed") && !document.getElementById(allIDs[i]).classList.contains("shipColor")) {
                     document.getElementById(allIDs[i]).classList.remove("shipColor");
                     document.getElementById(allIDs[i]).removeAttribute("draggable");
                     document.getElementById(allIDs[i]).removeAttribute("data-shiplength");
@@ -296,33 +295,48 @@ let table = new Vue({
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
 
-            let allIDs = []
+            let newAllIDs = []
 
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i)
                 //                console.log(newID)
-                allIDs.push(newID)
+                newAllIDs.push(newID)
             }
 
-            console.log(allIDs)
+            console.log(newAllIDs)
 
             //            console.log(ships);
 
 
-            for (let i = 0; i < allIDs.length; i++) {
+            for (let i = 0; i < newAllIDs.length; i++) {
 
-                document.getElementById(allIDs[i]).classList.add("shipColor")
-                document.getElementById(allIDs[i]).classList.remove("empty")
-                document.getElementById(allIDs[0]).setAttribute("draggable", "true");
-                document.getElementById(allIDs[0]).addEventListener("dragstart", this.dragStart);
-                document.getElementById(allIDs[i]).setAttribute("data-shipLength", allIDs.length);
-                // document.getElementById(allIDs[i]).getAttribute("data-shipType");
+                if(document.getElementById(newAllIDs[i]).classList.contains("empty")) {
+                    document.getElementById(newAllIDs[i]).classList.add("shipColor")
+                    document.getElementById(newAllIDs[i]).classList.remove("empty")
+                    document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
+                    document.getElementById(newAllIDs[0]).addEventListener("dragstart", this.dragStart);
+                    document.getElementById(newAllIDs[i]).setAttribute("data-shipLength", newAllIDs.length);
 
+                    table.allIDs = [];
+                    // document.getElementById(allIDs[i]).getAttribute("data-shipType");
+                } else {
+
+                    for(let i = 0; i < table.allIDs.length; i++) {
+                    document.getElementById(table.allIDs[i]).classList.add("shipColor")
+                    document.getElementById(table.allIDs[i]).classList.remove("empty")
+                    document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
+                    document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
+                    document.getElementById(table.allIDs[i]).setAttribute("data-shipLength", table.allIDs.length);
+                    }
+                    table.allIDs = [];
+                }
+                
                 for (let y = 0; y < types.length; y++) {
                     if (this.shipType == types[y].type) {
-                        types[y].location = allIDs
+                        types[y].location = table.allIDs
                     }
                 }
+                    
             }
 
         },

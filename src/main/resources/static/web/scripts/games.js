@@ -206,11 +206,6 @@ let app = new Vue({
                         app.login();
                         console.log("ALL good!")
                     }
-                    //                    if (data.hasOwnProperty('error')) {
-                    //                        alert(data.error)
-                    //                    } else {
-                    //                        app.login();
-                    //                    }
 
                 })
                 .catch(function (error) {

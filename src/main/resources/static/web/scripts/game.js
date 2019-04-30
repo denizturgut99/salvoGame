@@ -212,12 +212,10 @@ let table = new Vue({
             }
 
             // for (let i = 0; i < newIDs.length; i++) {
-
+            //     table.fullCell = false;
             //     if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
             //         console.log("hello")
             //         table.fullCell = true;
-            //     } else {
-            //         table.fullCell = false;
             //     }
 
             // }
@@ -274,18 +272,18 @@ let table = new Vue({
                 let newID = letter + (Number(number) + i)
                 //                console.log(newID)
                 newIDs.push(newID)
+                
             }
 
-            // for (let i = 0; i < newIDs.length; i++) {
+            for (let i = 0; i < newIDs.length; i++) {
+                table.fullCell = false;
+                if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
+                    table.fullCell = true;
+                    break;
+                    // document.getElementById(newIDs[i]).classList.add("notAllowed")
+                }
 
-            //     if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
-            //         table.fullCell = true;
-            //         document.getElementById(newIDs[i]).classList.add("notAllowed")
-            //     } else {
-            //         table.fullCell = false;
-            //     }
-
-            // }
+            }
         },
 
         dragDrop(e) {
@@ -307,13 +305,13 @@ let table = new Vue({
                 newAllIDs.push(newID)
             }
 
-            // console.log(newAllIDs)
+            console.log(newAllIDs)
 
-            for (let i = 0; i < newAllIDs.length; i++) {
+            for (let i = 0; i < newAllIDs.length - 1; i++) {
 
-                if (document.getElementById(newAllIDs[i]).classList.contains("empty")) {
+                if (table.fullCell = true) {
                     for (let y = i + 1; y < newAllIDs.length; y++) {
-                        if (document.getElementById(newAllIDs[y]).classList.contains("shipColor")) {
+                        // if (document.getElementById(newAllIDs[y]).classList.contains("shipColor")) {
 
                             for (let j = 0; j < table.allIDs.length; j++) {
                                 document.getElementById(table.allIDs[j]).classList.add("shipColor")
@@ -330,8 +328,29 @@ let table = new Vue({
                                 }
         
                             }
-                        } else {
+                        // } 
+                        // else {
 
+                        //     document.getElementById(newAllIDs[i]).classList.add("shipColor")
+                        //     document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
+                        //     document.getElementById(newAllIDs[i]).classList.remove("empty")
+                        //     document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
+                        //     document.getElementById(newAllIDs[0]).addEventListener("dragstart", this.dragStart);
+                        //     document.getElementById(newAllIDs[i]).setAttribute("data-shipLength", newAllIDs.length);
+
+                        //     for (let j = 0; j < types.length; j++) {
+                        //         if (this.shipType == types[j].type) {
+                        //             types[j].location = newAllIDs;
+                        //         }
+                        //     }
+                        // }
+                    }
+
+                    table.allIDs = [];
+
+                    // document.getElementById(allIDs[i]).getAttribute("data-shipType");
+                } else {
+                    for (let i = 0; i < table.allIDs.length; i++) {
                             document.getElementById(newAllIDs[i]).classList.add("shipColor")
                             document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                             document.getElementById(newAllIDs[i]).classList.remove("empty")
@@ -345,27 +364,6 @@ let table = new Vue({
                                 }
                             }
                         }
-                    }
-
-                    table.allIDs = [];
-
-                    // document.getElementById(allIDs[i]).getAttribute("data-shipType");
-                } else {
-                    for (let i = 0; i < table.allIDs.length; i++) {
-                        document.getElementById(table.allIDs[i]).classList.add("shipColor")
-                        document.getElementById(table.allIDs[i]).classList.remove("empty")
-                        document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
-                        document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
-                        document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
-                        document.getElementById(table.allIDs[i]).setAttribute("data-shipLength", table.allIDs.length);
-
-                        for (let y = 0; y < types.length; y++) {
-                            if (this.shipType == types[y].type) {
-                                types[y].location = table.allIDs
-                            }
-                        }
-
-                    }
 
                     table.allIDs = [];
                 }

@@ -10,7 +10,6 @@ let table = new Vue({
         gameData: [],
         linkID: [], //this is the gameplayer ID but is used to construct correct links
         shipLocs: [],
-        updatedShipLocs: [],
         userName: [],
         matchPlayers: [],
         salvoLocs: [],
@@ -22,6 +21,7 @@ let table = new Vue({
         outOfGrid: false,
         shipType: "",
         allIDs: [],
+        shipCurrentLoc: [],
         fullCell: false,
         shipPositions: [{
                 type: "Carrier",
@@ -39,7 +39,7 @@ let table = new Vue({
                 length: 4
             },
             {
-                type: "Patrol boat",
+                type: "PatrolBoat",
                 locations: [],
                 length: 2
             },
@@ -121,7 +121,9 @@ let table = new Vue({
                 for (let j = 0; j < locs.length; j++) {
                     document.getElementById(locs[j]).classList.add("shipColor");
                     document.getElementById(locs[j]).setAttribute('data-shipLength', locs.length);
+                    document.getElementById(locs[j]).setAttribute('data-shipLocs', locs);
                     document.getElementById(locs[j]).setAttribute('data-shipType', types);
+                    document.getElementById(locs[j]).classList.add(types);
 
                     if (j == 0) {
                         document.getElementById(locs[j]).setAttribute("draggable", "true");
@@ -156,19 +158,41 @@ let table = new Vue({
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
 
+            let locs = table.shipLocs; 
+
             console.log(letter)
             console.log(number)
 
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
             this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
-            // console.log(this.shipLength)
+            this.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
+
+            console.log("THIS IS THE CURRENT SHIP LOCATION " + this.shipCurrentLoc);
 
             //check if vertical
 
+            let boatType = [];
+            let getShipType = document.getElementsByClassName(table.shipType);
 
-            for (let i = 0; i < this.shipLength; i++) {
-                let newID = letter + (Number(number) + i);
-                table.allIDs.push(newID)
+            for (let i = 0; i < getShipType.length; i++) {
+                boatType.push(getShipType[i].id)
+            }
+
+            for (let i = 0; i < boatType.length - 1; i++) {
+                if(boatType[i][0] != boatType[i + 1][0]) {
+                    table.isVertical = true;
+                    console.log("THIS SHIP IS VERTICAL")
+                } else {
+                    table.isVertical = false;
+                    console.log("THIS SHIP IS HORIZONTAL")
+                }
+            }
+
+            if(table.isVertical = false) {
+                for (let i = 0; i < this.shipLength; i++) {
+                    let newID = letter + (Number(number) + i);
+                    table.allIDs.push(newID)
+                }
             }
 
             //add and remove attributes/classes in order to make the ship disappear until placed again
@@ -177,15 +201,16 @@ let table = new Vue({
                 document.getElementById(table.allIDs[0]).removeAttribute("draggable");
                 document.getElementById(table.allIDs[i]).removeAttribute("data-shipLength");
                 document.getElementById(table.allIDs[i]).removeAttribute("data-shipType");
+                document.getElementById(table.allIDs[i]).removeAttribute("data-shipLocs");
                 document.getElementById(table.allIDs[i]).classList.add("empty");
             }
 
             // console.log("hello" + table.allIDs)
         },
 
-        // dragEnd(e) {
-        //     console.log("END", e.target.id);
-        // },
+        dragEnd(e) {
+            console.log("END", e.target.id);
+        },
 
         dragOver(e) {
             //dragOver is necessary otherwise the ship goes back to its original place
@@ -199,12 +224,6 @@ let table = new Vue({
             let number = shipCellID.substr(1, 2);
 
             let newIDs = []
-
-            if(shipCellID == null) {
-                table.outOfGrid = true;
-            }
-
-            console.log("FUCK OFF" + shipCellID);
 
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i)
@@ -228,16 +247,16 @@ let table = new Vue({
             // console.log(allIDs)
             if (table.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
-                    // if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
+                    if(document.getElementById(newIDs[i]) == null) {
+                        table.outOfGrid = true;
+                    } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
+                        document.getElementById(newIDs[i]).classList.remove(table.shipType);
                         document.getElementById(newIDs[i]).removeAttribute("draggable");
-                        document.getElementById(newIDs[i]).removeAttribute("data-shiplength");
-                        document.getElementById(newIDs[i]).removeAttribute("data-shiptype");
+                        document.getElementById(newIDs[i]).removeAttribute("data-shipLength");
+                        document.getElementById(newIDs[i]).removeAttribute("data-shipType");
+                        document.getElementById(newIDs[i]).removeAttribute("data-shipLocs");
                         document.getElementById(newIDs[i]).classList.add("empty");
-                    // }
-
-                    if (document.getElementById(newIDs[i]).classList.contains("notAllowed")) {
-                        document.getElementById(newIDs[i]).classList.remove("notAllowed")
                     }
                 }
             }
@@ -272,11 +291,17 @@ let table = new Vue({
 
             for (let i = 0; i < newIDs.length; i++) {
                 // table.fullCell = false;
-                if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
+                if(document.getElementById(newIDs[i]) == null) {
+                    table.outOfGrid = true;
+                } else if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                     table.fullCell = true;
                     break;
-                    // document.getElementById(newIDs[i]).classList.add("notAllowed")
-                } else {
+                } 
+                // else if(!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
+                //     table.fullCell = false;
+                //     document.getElementById(newIDs[i]).classList.add("notAllowed")
+                // }
+                else {
                     table.fullCell = false;
                 }
             }
@@ -298,6 +323,10 @@ let table = new Vue({
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i)
                 newAllIDs.push(newID)
+
+                if(newAllIDs.length == 0) {
+                    table.outOfGrid = true;
+                }
             }
 
             console.log(newAllIDs)
@@ -311,10 +340,12 @@ let table = new Vue({
 
                     for (let j = 0; j < table.allIDs.length; j++) {
                         document.getElementById(table.allIDs[j]).classList.add("shipColor")
+                        document.getElementById(table.allIDs[j]).classList.add(table.shipType);
                         document.getElementById(table.allIDs[j]).classList.remove("empty")
                         document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
                         document.getElementById(table.allIDs[j]).setAttribute('data-shipType', table.shipType);
+                        document.getElementById(table.allIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
                         document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
                         document.getElementById(table.allIDs[j]).setAttribute("data-shipLength", table.allIDs.length);
 
@@ -334,10 +365,12 @@ let table = new Vue({
                     for (let i = 0; i < table.allIDs.length; i++) {
                         console.log("if full cell is FALSE this function runs")
                         document.getElementById(newAllIDs[i]).classList.add("shipColor")
+                        document.getElementById(newAllIDs[i]).classList.add(table.shipType);
                         document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(newAllIDs[i]).classList.remove("empty")
                         document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
                         document.getElementById(newAllIDs[i]).setAttribute('data-shipType', table.shipType);
+                        document.getElementById(newAllIDs[i]).setAttribute('data-shipLocs', newAllIDs);
                         document.getElementById(newAllIDs[0]).addEventListener("dragstart", this.dragStart);
                         document.getElementById(newAllIDs[i]).setAttribute("data-shipLength", newAllIDs.length);
 
@@ -348,6 +381,26 @@ let table = new Vue({
                         }
                     }
 
+                    table.allIDs = [];
+                } else if (document.getElementById(newAllIDs[i]) == table.allIDs) {
+                    for (let j = 0; j < table.allIDs.length; j++) {
+                        document.getElementById(table.allIDs[j]).classList.add("shipColor")
+                        document.getElementById(table.allIDs[j]).classList.add(table.shipType);
+                        document.getElementById(table.allIDs[j]).classList.remove("empty")
+                        document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
+                        document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
+                        document.getElementById(table.allIDs[j]).setAttribute('data-shipType', table.shipType);
+                        document.getElementById(table.allIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
+                        document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
+                        document.getElementById(table.allIDs[j]).setAttribute("data-shipLength", table.allIDs.length);
+
+                        for (let x = 0; x < types.length; x++) {
+                            if (this.shipType == types[x].type) {
+                                types[x].location = table.allIDs;
+                            }
+                        }
+
+                    }
                     table.allIDs = [];
                 }
 
@@ -502,7 +555,7 @@ let table = new Vue({
                             "length": 4
                         },
                         {
-                            "type": "Patrol boat",
+                            "type": "PatrolBoat",
                             "locations": ["E5", "E6"],
                             "length": 2
                         },

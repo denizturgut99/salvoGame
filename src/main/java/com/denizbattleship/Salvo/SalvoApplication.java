@@ -135,76 +135,76 @@ public class SalvoApplication {
 			gp1.addShip(sh1);
 			Ship sh2 = new Ship("Submarine", loc2);
 			gp1.addShip(sh2);
-			Ship sh3 = new Ship("Patrol Boat", loc3);
+			Ship sh3 = new Ship("PatrolBoat", loc3);
 			gp1.addShip(sh3);
-			Ship sh30 = new Ship("Patrol Boat", loc8);
+			Ship sh30 = new Ship("PatrolBoat", loc8);
 			gp1.addShip(sh30);
 			Ship sh31 = new Ship("Submarine", loc7);
 			gp1.addShip(sh31);
 
 			Ship sh4 = new Ship("Destroyer", loc4);
 			gp2.addShip(sh4);
-			Ship sh5 = new Ship("Patrol Boat", loc5);
+			Ship sh5 = new Ship("PatrolBoat", loc5);
 			gp2.addShip(sh5);
 
 			Ship sh6 = new Ship("Destroyer", loc4);
 			gp3.addShip(sh6);
-			Ship sh7 = new Ship("Patrol Boat", loc6);
+			Ship sh7 = new Ship("PatrolBoat", loc6);
 			gp3.addShip(sh7);
 
 			Ship sh8 = new Ship("Submarine", loc7);
 			gp4.addShip(sh8);
-			Ship sh9 = new Ship("Patrol Boat", loc8);
+			Ship sh9 = new Ship("PatrolBoat", loc8);
 			gp4.addShip(sh9);
 
 			Ship sh10 = new Ship("Destroyer", loc4);
 			gp5.addShip(sh10);
-			Ship sh11 = new Ship("Patrol Boat", loc6);
+			Ship sh11 = new Ship("PatrolBoat", loc6);
 			gp5.addShip(sh11);
 
 			Ship sh12 = new Ship("Submarine", loc7);
 			gp6.addShip(sh12);
-			Ship sh13 = new Ship("Patrol Boat", loc8);
+			Ship sh13 = new Ship("PatrolBoat", loc8);
 			gp6.addShip(sh13);
 
 			Ship sh14 = new Ship("Destroyer", loc4);
 			gp7.addShip(sh14);
-			Ship sh15 = new Ship("Patrol Boat", loc6);
+			Ship sh15 = new Ship("PatrolBoat", loc6);
 			gp7.addShip(sh15);
 
 			Ship sh16 = new Ship("Submarine", loc7);
 			gp8.addShip(sh16);
-			Ship sh17 = new Ship("Patrol Boat", loc8);
+			Ship sh17 = new Ship("PatrolBoat", loc8);
 			gp8.addShip(sh17);
 
 			Ship sh18 = new Ship("Destroyer", loc4);
 			gp9.addShip(sh18);
-			Ship sh19 = new Ship("Patrol Boat", loc6);
+			Ship sh19 = new Ship("PatrolBoat", loc6);
 			gp9.addShip(sh19);
 
 			Ship sh20 = new Ship("Submarine", loc7);
 			gp10.addShip(sh20);
-			Ship sh21 = new Ship("Patrol Boat", loc8);
+			Ship sh21 = new Ship("PatrolBoat", loc8);
 			gp10.addShip(sh21);
 
 			Ship sh22 = new Ship("Destroyer", loc4);
 			gp11.addShip(sh22);
-			Ship sh23 = new Ship("Patrol Boat", loc6);
+			Ship sh23 = new Ship("PatrolBoat", loc6);
 			gp11.addShip(sh23);
 
-			Ship sh24 = new Ship("Patrol Boat", loc8);
+			Ship sh24 = new Ship("PatrolBoat", loc8);
 			gp12.addShip(sh24);
 			Ship sh25 = new Ship("Submarine", loc2);
 			gp12.addShip(sh25);
 
 			Ship sh26 = new Ship("Destroyer", loc7);
 			gp13.addShip(sh26);
-			Ship sh27 = new Ship("Patrol Boat", loc6);
+			Ship sh27 = new Ship("PatrolBoat", loc6);
 			gp13.addShip(sh27);
 
 			Ship sh28 = new Ship("Submarine", loc7);
 			gp14.addShip(sh28);
-			Ship sh29 = new Ship("Patrol Boat", loc8);
+			Ship sh29 = new Ship("PatrolBoat", loc8);
 			gp14.addShip(sh29);
 
 

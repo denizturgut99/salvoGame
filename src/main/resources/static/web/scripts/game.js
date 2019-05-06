@@ -147,21 +147,15 @@ let table = new Vue({
                         fill.addEventListener("dragstart", this.dragStart);
                         fill.addEventListener("dragend", this.dragEnd);
                     }
-
-
                 }
             }
         },
         dragStart(e) {
-            // table.fullCell = false;
             console.log("START", e.target.id);
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
 
-            let locs = table.shipLocs; 
-
-            console.log(letter)
-            console.log(number)
+            let locs = table.shipLocs;
 
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
             this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
@@ -170,30 +164,40 @@ let table = new Vue({
             console.log("THIS IS THE CURRENT SHIP LOCATION " + this.shipCurrentLoc);
 
             //check if vertical
-
-            let boatType = [];
+            let boatLoc = [];
             let getShipType = document.getElementsByClassName(table.shipType);
 
             for (let i = 0; i < getShipType.length; i++) {
-                boatType.push(getShipType[i].id)
+                boatLoc.push(getShipType[i].id)
             }
 
-            for (let i = 0; i < boatType.length - 1; i++) {
-                if(boatType[i][0] != boatType[i + 1][0]) {
+            for (let i = 0; i < boatLoc.length - 1; i++) {
+                if (boatLoc[i][0] != boatLoc[i + 1][0]) {
                     table.isVertical = true;
-                    console.log("THIS SHIP IS VERTICAL")
                 } else {
                     table.isVertical = false;
-                    console.log("THIS SHIP IS HORIZONTAL")
                 }
             }
 
-            if(table.isVertical = false) {
+            if (table.isVertical == false) {
                 for (let i = 0; i < this.shipLength; i++) {
                     let newID = letter + (Number(number) + i);
                     table.allIDs.push(newID)
                 }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            table.allIDs.push(newID);
+                        }
+                    }
+                }
             }
+            console.log("ALL IDS " + table.allIDs)
 
             //add and remove attributes/classes in order to make the ship disappear until placed again
             for (let i = 0; i < table.allIDs.length; i++) {
@@ -204,8 +208,6 @@ let table = new Vue({
                 document.getElementById(table.allIDs[i]).removeAttribute("data-shipLocs");
                 document.getElementById(table.allIDs[i]).classList.add("empty");
             }
-
-            // console.log("hello" + table.allIDs)
         },
 
         dragEnd(e) {
@@ -218,8 +220,6 @@ let table = new Vue({
             console.log("OVER", e.target.id);
 
             let shipCellID = e.target.id;
-            // console.log(shipCellID)
-
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
 
@@ -227,8 +227,7 @@ let table = new Vue({
 
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i)
-                //                console.log(newID)
-                newIDs.push(newID)
+                newIDs.push(newID);
             }
         },
 
@@ -244,10 +243,10 @@ let table = new Vue({
                 let newID = letter + (Number(number) + i);
                 newIDs.push(newID)
             }
-            // console.log(allIDs)
+
             if (table.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
-                    if(document.getElementById(newIDs[i]) == null) {
+                    if (document.getElementById(newIDs[i]) == null) {
                         table.outOfGrid = true;
                     } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
@@ -270,38 +269,47 @@ let table = new Vue({
             let id = e.target;
 
             let shipCellID = e.target.id;
-            // console.log(shipCellID)
-
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
 
             let newIDs = []
 
-            for (let i = 0; i < this.shipLength; i++) {
-                if ((Number(number) + i) > 10) {
-                    table.outOfGrid = true;
-                    let newID = letter + (Number(number) + i)
-                    newIDs.push(newID)
-                } else {
-                    table.outOfGrid = false;
-                    let newID = letter + (Number(number) + i)
-                    newIDs.push(newID)
+            if(table.isVertical == false) {
+                for (let i = 0; i < this.shipLength; i++) {
+                    if ((Number(number) + i) > 10) {
+                        table.outOfGrid = true;
+                        let newID = letter + (Number(number) + i)
+                        newIDs.push(newID)
+                    } else {
+                        table.outOfGrid = false;
+                        let newID = letter + (Number(number) + i)
+                        newIDs.push(newID)
+                    }
+                }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            newIDs.push(newID);
+                        }
+                    }
                 }
             }
 
+            console.log("DRAG ENTER NEW LOCATIONS " + newIDs)
+
             for (let i = 0; i < newIDs.length; i++) {
                 // table.fullCell = false;
-                if(document.getElementById(newIDs[i]) == null) {
+                if (document.getElementById(newIDs[i]) == null) {
                     table.outOfGrid = true;
                 } else if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                     table.fullCell = true;
                     break;
-                } 
-                // else if(!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
-                //     table.fullCell = false;
-                //     document.getElementById(newIDs[i]).classList.add("notAllowed")
-                // }
-                else {
+                } else {
                     table.fullCell = false;
                 }
             }
@@ -320,24 +328,30 @@ let table = new Vue({
 
             let newAllIDs = []
 
-            for (let i = 0; i < this.shipLength; i++) {
-                let newID = letter + (Number(number) + i)
-                newAllIDs.push(newID)
+            if (table.isVertical == false) {
+                for (let i = 0; i < this.shipLength; i++) {
+                    let newID = letter + (Number(number) + i)
+                    newAllIDs.push(newID)
+                }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
 
-                if(newAllIDs.length == 0) {
-                    table.outOfGrid = true;
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            newAllIDs.push(newID);
+                        }
+                    }
                 }
             }
-
             console.log(newAllIDs)
 
             for (let i = 0; i < newAllIDs.length - 1; i++) {
-                if (table.fullCell == true || table.outOfGrid == true) {
-
-                    console.log("if full cell is TRUE this function runs")
-
+                if (table.fullCell == true || table.outOfGrid == true || document.getElementById(shipCellID).classList.contains("indicator")) {
+                    console.log("IF CELL IS FULL THIS FUNCTION RUNS")
                     //table.allIDs has the initial starting locations
-
                     for (let j = 0; j < table.allIDs.length; j++) {
                         document.getElementById(table.allIDs[j]).classList.add("shipColor")
                         document.getElementById(table.allIDs[j]).classList.add(table.shipType);
@@ -356,13 +370,10 @@ let table = new Vue({
                         }
 
                     }
-
-
                     table.allIDs = [];
 
-                    // document.getElementById(allIDs[i]).getAttribute("data-shipType");
                 } else if (table.fullCell == false || table.outOfGrid == false) {
-                    for (let i = 0; i < table.allIDs.length; i++) {
+                    for (let i = 0; i < newAllIDs.length; i++) {
                         console.log("if full cell is FALSE this function runs")
                         document.getElementById(newAllIDs[i]).classList.add("shipColor")
                         document.getElementById(newAllIDs[i]).classList.add(table.shipType);
@@ -380,42 +391,18 @@ let table = new Vue({
                             }
                         }
                     }
-
-                    table.allIDs = [];
-                } else if (document.getElementById(newAllIDs[i]) == table.allIDs) {
-                    for (let j = 0; j < table.allIDs.length; j++) {
-                        document.getElementById(table.allIDs[j]).classList.add("shipColor")
-                        document.getElementById(table.allIDs[j]).classList.add(table.shipType);
-                        document.getElementById(table.allIDs[j]).classList.remove("empty")
-                        document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
-                        document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
-                        document.getElementById(table.allIDs[j]).setAttribute('data-shipType', table.shipType);
-                        document.getElementById(table.allIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
-                        document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
-                        document.getElementById(table.allIDs[j]).setAttribute("data-shipLength", table.allIDs.length);
-
-                        for (let x = 0; x < types.length; x++) {
-                            if (this.shipType == types[x].type) {
-                                types[x].location = table.allIDs;
-                            }
-                        }
-
-                    }
                     table.allIDs = [];
                 }
-
             }
 
         },
 
         showSalvoes() {
             let salvoes = table.salvoLocs;
-            //            console.log(salvoes);
 
             for (let i = 0; i < salvoes.length; i++) {
                 let locs = salvoes[i].location;
                 let turns = salvoes[i].turn;
-                //                console.log(locs)
 
                 for (let j = 0; j < locs.length; j++) {
                     document.getElementById(locs[j] + "opp").style.backgroundColor = "orange";
@@ -471,6 +458,7 @@ let table = new Vue({
                     if (i == 0 && j > 0) {
                         td.textContent = j;
                         td.classList.remove("empty");
+                        td.classList.add("indicator")
                         td.style.backgroundColor = "black";
                         //number start from 1 and the very first cell gets left empty
                     }
@@ -478,6 +466,7 @@ let table = new Vue({
                     if (i >= 0 && j == 0) {
                         td.textContent = letters[i];
                         td.classList.remove("empty");
+                        td.classList.add("indicator")
                         td.style.backgroundColor = "black";
                         //the first element in the letters array gets ignored and put in the table, this also avoids the repetition of the letters array into the other cells
                     }
@@ -561,7 +550,7 @@ let table = new Vue({
                         },
                         {
                             "type": "Destroyer",
-                            "locations": ["C3", "B3", "A3"],
+                            "locations": ["D3", "E3", "F3"],
                             "length": 3
                         }
 

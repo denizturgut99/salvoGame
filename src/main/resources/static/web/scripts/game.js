@@ -197,7 +197,6 @@ let table = new Vue({
                     }
                 }
             }
-            console.log("ALL IDS " + table.allIDs)
 
             //add and remove attributes/classes in order to make the ship disappear until placed again
             for (let i = 0; i < table.allIDs.length; i++) {
@@ -235,8 +234,8 @@ let table = new Vue({
             console.log("LEAVE", e.target.id);
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
-            //remove the ships here
 
+            //remove the ships here
             let newIDs = []
 
             for (let i = 0; i < this.shipLength; i++) {
@@ -247,7 +246,8 @@ let table = new Vue({
             if (table.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
                     if (document.getElementById(newIDs[i]) == null) {
-                        table.outOfGrid = true;
+                        // table.outOfGrid = true;
+                        console.log("out of grid")
                     } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
                         document.getElementById(newIDs[i]).classList.remove(table.shipType);
@@ -275,16 +275,10 @@ let table = new Vue({
             let newIDs = []
 
             if(table.isVertical == false) {
-                for (let i = 0; i < this.shipLength; i++) {
-                    if ((Number(number) + i) > 10) {
-                        table.outOfGrid = true;
+                for (let i = 0; i < this.shipLength; i++) {       
+                        
                         let newID = letter + (Number(number) + i)
                         newIDs.push(newID)
-                    } else {
-                        table.outOfGrid = false;
-                        let newID = letter + (Number(number) + i)
-                        newIDs.push(newID)
-                    }
                 }
             } else {
                 for (let i = 0; i < this.shipLength; i++) {
@@ -311,6 +305,7 @@ let table = new Vue({
                     break;
                 } else {
                     table.fullCell = false;
+                    table.outOfGrid = false;
                 }
             }
         },
@@ -349,7 +344,7 @@ let table = new Vue({
             console.log(newAllIDs)
 
             for (let i = 0; i < newAllIDs.length - 1; i++) {
-                if (table.fullCell == true || table.outOfGrid == true || document.getElementById(shipCellID).classList.contains("indicator")) {
+                if (table.fullCell == true || table.outOfGrid == true) {
                     console.log("IF CELL IS FULL THIS FUNCTION RUNS")
                     //table.allIDs has the initial starting locations
                     for (let j = 0; j < table.allIDs.length; j++) {

@@ -128,6 +128,7 @@ let table = new Vue({
 
                     if (j == 0) {
                         document.getElementById(locs[j]).setAttribute("draggable", "true");
+                        document.getElementById(locs[j]).classList.add("rotateShip")
                     }
 
                     if (document.getElementById(locs[j]).classList.contains("shipColor")) {
@@ -156,13 +157,102 @@ let table = new Vue({
                     }
                 }
             }
+
+            table.addRotateShip();
         },
-        rotateShip() {
-            this.dragStart(e)
-            this.dragEnter(e)
-            this.dragLeave(e)
-            table.isVertical = !table.isVertical
-            this.dragDrop(e)
+        rotateShip(e) {
+
+            let isVerticalNow = Boolean;
+
+            let shipCellID = e.target.id;
+            let letter = shipCellID.substr(0, 1);
+            let number = shipCellID.substr(1, 2);
+
+            let boatLoc = [];
+            let targeted = document.getElementById(e.target.id).getAttribute("data-shipType")
+            let getShipType = document.getElementsByClassName(targeted);
+
+            for (let i = 0; i < getShipType.length; i++) {
+                boatLoc.push(getShipType[i].id)
+            }
+
+            for (let i = 0; i < boatLoc.length - 1; i++) {
+                if (boatLoc[i][0] != boatLoc[i + 1][0]) {
+                    table.isVerticalNow = true;
+                } else {
+                    table.isVerticalNow = false;
+                }
+            }
+
+            if (table.isVerticalNow == false) {
+                for (let i = 0; i < this.shipLength; i++) {
+                    let newID = letter + (Number(number) + i);
+                    table.allIDs.push(newID)
+                }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            table.allIDs.push(newID);
+                        }
+                    }
+                }
+            }
+
+            let shipLength = boatLoc.length;
+            let newIDs = [];
+
+            if(isVerticalNow == false) {
+                const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            newIDs.push(newID);
+                        }
+                    }
+            } else {
+                for(let i = 0; i < shipLength; i++) {
+                    let newID = letter + (Number(number) + i)
+                    newIDs.push(newID)
+                }
+            }
+
+            let locOutGrid = []
+            let emptyCell = []
+
+            for ( let i = 0; i < shipLength; i++) {
+                locOutGrid.push(document.getElementById(newIDs[i]))
+            }
+
+            if(!locOutGrid.includes(null)) {
+                for(let i = 1; i < shipLength; i++) {
+                    if(locOutGrid[i].classList.contains("empty") == false) {
+                        emptyCell.push(false)
+                    } else {
+                        emptyCell.push(true)
+                    }
+                }
+            }
+
+            // if(!locOutGrid.includes(null) || emptyCell.includes(true)) {
+                
+            // }
+        },
+        addRotateShip() {
+            let rotateButton = document.getElementsByClassName("rotateShip")
+            // console.log(rotateButton)
+            for (let i = 0; i < rotateButton.length; i++) {
+                let typeOfShip = rotateButton[i].getAttribute("data-shipType")
+                let idValue = rotateButton[i].getAttribute("id")
+                rotateButton[i].innerHTML = "<img src=./styles/rotate.png width='10px' height='10px'>";
+                rotateButton[i].addEventListener("click", this.rotateShip)
+            }
         },
         dragStart(e) {
             table.occurence = 0;
@@ -285,6 +375,8 @@ let table = new Vue({
                         console.log("out of grid")
                     } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
+                        document.getElementById(newIDs[i]).classList.remove("rotateShip");
+                        document.getElementById(newIDs[i]).removeEventListener("click", this.rotateShip);
                         document.getElementById(newIDs[i]).classList.remove(table.shipType);
                         document.getElementById(newIDs[i]).removeAttribute("draggable");
                         document.getElementById(newIDs[i]).removeAttribute("data-shipLength");
@@ -397,6 +489,8 @@ let table = new Vue({
                     for (let j = 0; j < table.allIDs.length; j++) {
                         document.getElementById(table.allIDs[j]).classList.add("shipColor")
                         document.getElementById(table.allIDs[j]).classList.add(table.shipType);
+                        document.getElementById(table.allIDs[0]).classList.add("rotateShip");
+                        document.getElementById(table.allIDs[0]).addEventListener("click", this.rotateShip);
                         document.getElementById(table.allIDs[j]).classList.remove("empty")
                         // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
@@ -410,7 +504,7 @@ let table = new Vue({
                                 types[x].location = table.allIDs;
                             }
                         }
-
+                        table.addRotateShip();
                     }
                     table.allIDs = [];
 
@@ -419,6 +513,8 @@ let table = new Vue({
                         console.log("if full cell is FALSE this function runs")
                         document.getElementById(newAllIDs[i]).classList.add("shipColor")
                         document.getElementById(newAllIDs[i]).classList.add(table.shipType);
+                        document.getElementById(newAllIDs[0]).classList.add("rotateShip");
+                        document.getElementById(newAllIDs[0]).addEventListener("click", this.rotateShip);
                         // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(newAllIDs[i]).classList.remove("empty")
                         document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
@@ -432,11 +528,11 @@ let table = new Vue({
                                 types[j].location = newAllIDs;
                             }
                         }
+                        table.addRotateShip();
                     }
                     table.allIDs = [];
                 }
             }
-
         },
 
         showSalvoes() {
@@ -560,6 +656,8 @@ let table = new Vue({
                 document.getElementById(shipID[j]).classList.add("shipColor")
                 document.getElementById(shipID[j]).classList.add(table.shipType);
                 document.getElementById(shipID[j]).classList.remove("empty")
+                document.getElementById(shipID[0]).classList.add("rotateShip");
+                document.getElementById(shipID[0]).addEventListener("click", this.rotateShip);
                 // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                 document.getElementById(shipID[0]).setAttribute("draggable", "true");
                 document.getElementById(shipID[j]).setAttribute('data-shipType', table.shipType);
@@ -572,6 +670,7 @@ let table = new Vue({
                         types[x].location = shipID;
                     }
                 }
+                table.addRotateShip();
             }
             table.allIDs = [];
         },

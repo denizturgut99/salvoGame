@@ -1,10 +1,11 @@
 let table = new Vue({
     el: "#app1",
     mounted() {
-        this.getUrlVars();
-        this.getData();
-        this.shipTable();
-        this.salvoTable();
+        this.getUrlVars()
+        this.getData()
+        this.shipTable()
+        this.salvoTable()
+        // this.getPlayerShips()
     },
     data: {
         gameData: [],
@@ -21,6 +22,8 @@ let table = new Vue({
         outOfGrid: false,
         shipType: "",
         allIDs: [],
+        occurence: 0,
+        alertMsg: false,
         shipCurrentLoc: [],
         fullCell: false,
         shipPositions: [{
@@ -75,8 +78,6 @@ let table = new Vue({
                     table.showShips();
                     table.showSalvoes();
                     table.showOpponentSalvoes();
-                    table.dragShips();
-
                 })
                 .catch(error => console.log(error));
         },
@@ -135,6 +136,7 @@ let table = new Vue({
 
                     let empties = document.getElementsByClassName("empty");
                     let filled = document.getElementsByClassName("shipColor");
+                    let indicators = document.getElementsByClassName("indicator");
 
                     for (let empty of empties) {
                         empty.addEventListener("dragover", this.dragOver);
@@ -147,10 +149,24 @@ let table = new Vue({
                         fill.addEventListener("dragstart", this.dragStart);
                         fill.addEventListener("dragend", this.dragEnd);
                     }
+
+                    for(let indicator of indicators) {
+                        indicator.addEventListener("dragover", this.dragOver);
+                        indicator.addEventListener("dragenter", this.dragEnter);
+                    }
                 }
             }
         },
+        rotateShip() {
+            this.dragStart(e)
+            this.dragEnter(e)
+            this.dragLeave(e)
+            table.isVertical = !table.isVertical
+            this.dragDrop(e)
+        },
         dragStart(e) {
+            table.occurence = 0;
+            table.alertMsg = false;
             console.log("START", e.target.id);
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
@@ -224,9 +240,28 @@ let table = new Vue({
 
             let newIDs = []
 
-            for (let i = 0; i < this.shipLength; i++) {
-                let newID = letter + (Number(number) + i)
-                newIDs.push(newID);
+            if(shipCellID.length == 0) {
+                // console.log("HELLO")
+                table.outOfGrid = true;
+            }
+            
+            if(table.isVertical == false) {
+                for (let i = 0; i < this.shipLength; i++) {       
+                        let newID = letter + (Number(number) + i)
+                        newIDs.push(newID)
+                }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            newIDs.push(newID);
+                        }
+                    }
+                }
             }
         },
 
@@ -266,8 +301,6 @@ let table = new Vue({
             e.preventDefault();
             console.log("ENTER", e.target.id);
 
-            let id = e.target;
-
             let shipCellID = e.target.id;
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
@@ -294,9 +327,10 @@ let table = new Vue({
                 }
             }
 
-            console.log("DRAG ENTER NEW LOCATIONS " + newIDs)
-
+            console.log("DRAG ENTER NEW LOCATIONS ", newIDs)
+            // console.log("outside for")
             for (let i = 0; i < newIDs.length; i++) {
+                // console.log("inside for")
                 // table.fullCell = false;
                 if (document.getElementById(newIDs[i]) == null) {
                     table.outOfGrid = true;
@@ -308,6 +342,19 @@ let table = new Vue({
                     table.outOfGrid = false;
                 }
             }
+
+            let outSide = e.target.getAttribute("class");
+
+            if(outSide == "indicator") {
+                if(this.alertMsg == false && this.occurence < 1) {
+                    this.makeShip(table.allIDs)
+                    alert("You can't get outside the grid")
+                }
+
+                table.occurence++;
+                table.alertMsg = true;
+            }
+
         },
 
         dragDrop(e) {
@@ -351,7 +398,7 @@ let table = new Vue({
                         document.getElementById(table.allIDs[j]).classList.add("shipColor")
                         document.getElementById(table.allIDs[j]).classList.add(table.shipType);
                         document.getElementById(table.allIDs[j]).classList.remove("empty")
-                        document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
+                        // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
                         document.getElementById(table.allIDs[j]).setAttribute('data-shipType', table.shipType);
                         document.getElementById(table.allIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
@@ -372,7 +419,7 @@ let table = new Vue({
                         console.log("if full cell is FALSE this function runs")
                         document.getElementById(newAllIDs[i]).classList.add("shipColor")
                         document.getElementById(newAllIDs[i]).classList.add(table.shipType);
-                        document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
+                        // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                         document.getElementById(newAllIDs[i]).classList.remove("empty")
                         document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
                         document.getElementById(newAllIDs[i]).setAttribute('data-shipType', table.shipType);
@@ -505,16 +552,38 @@ let table = new Vue({
             myTable.appendChild(table)
             document.getElementById("0opp").removeAttribute("id")
         },
+        makeShip(shipID) {
+
+            let types = table.shipLocs;
+
+            for (let j = 0; j < shipID.length; j++) {
+                document.getElementById(shipID[j]).classList.add("shipColor")
+                document.getElementById(shipID[j]).classList.add(table.shipType);
+                document.getElementById(shipID[j]).classList.remove("empty")
+                // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
+                document.getElementById(shipID[0]).setAttribute("draggable", "true");
+                document.getElementById(shipID[j]).setAttribute('data-shipType', table.shipType);
+                document.getElementById(shipID[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
+                document.getElementById(shipID[0]).addEventListener("dragstart", this.dragStart);
+                document.getElementById(shipID[j]).setAttribute("data-shipLength", table.allIDs.length);
+
+                for (let x = 0; x < types.length; x++) {
+                    if (this.shipType == types[x].type) {
+                        types[x].location = shipID;
+                    }
+                }
+            }
+            table.allIDs = [];
+        },
         getUrlVars() {
             let vars = {};
             let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-
                 vars = value; //gets the ID as a value instead of a string to make sure the data is working properly
             });
             return this.linkID = vars;
         },
         getPlayerShips() {
-            let url = "/api/games/players/" + table.linkID + "/ships"
+            let url = "/api/games/players/" + this.linkID + "/ships"
 
             fetch(url, {
                     credentials: 'include',

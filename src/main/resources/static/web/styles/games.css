@@ -1,6 +1,6 @@
 body {
-    background-image: url(warships.jpeg);
-    background-size: cover;
+        background-image: url(plain-black-background.jpeg);
+       background-size: cover;
 }
 
 table {
@@ -8,11 +8,21 @@ table {
 }
 
 table td {
-    background-color: rgba(0, 0, 255, 0.3);
-    color: white;
+    background-color: rgb(4, 238, 4);
+    color: black;
 }
 
 input:invalid {
     border-bottom: 2px solid red;
 }
 
+.eightbit { 
+    font-family: '8BITWONDERNominal'; 
+    font-weight: normal; 
+    font-style: normal; 
+ }
+
+ .container {
+    color: rgb(4, 238, 4);
+    font-size: 10px;
+}

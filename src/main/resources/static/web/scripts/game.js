@@ -5,7 +5,6 @@ let table = new Vue({
         this.getData()
         this.shipTable()
         this.salvoTable()
-        // this.getPlayerShips()
     },
     data: {
         gameData: [],
@@ -113,7 +112,6 @@ let table = new Vue({
         },
         showShips() {
             let ships = table.shipLocs;
-            //            console.log(ships);
 
             for (let i = 0; i < ships.length; i++) {
                 let locs = ships[i].location;
@@ -148,7 +146,6 @@ let table = new Vue({
 
                     for (let fill of filled) {
                         fill.addEventListener("dragstart", this.dragStart);
-                        fill.addEventListener("dragend", this.dragEnd);
                     }
 
                     for (let indicator of indicators) {
@@ -166,29 +163,21 @@ let table = new Vue({
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
 
-            console.log("this is the dom elem id", currentID)
-
             let boatLoc = []; //selected ship locs
             let targeted = document.getElementById(currentID).getAttribute("data-shipType") //type of ship, e.g. 'BattleShip'
-            console.log(targeted)
             let getShipType = document.getElementsByClassName(targeted); //gets all of the ship cells according the ship type
 
-            console.log(getShipType)
             for (let i = 0; i < getShipType.length; i++) {
                 boatLoc.push(getShipType[i].id)
             }
-
-            console.log(boatLoc)
 
             let isVerticalNow = Boolean;
 
             for (let i = 0; i < boatLoc.length - 1; i++) {
                 if (boatLoc[i][0] != boatLoc[i + 1][0]) {
                     isVerticalNow = true;
-                    console.log("VERTICAL")
                 } else {
                     isVerticalNow = false;
-                    console.log("HORIZONTAL")
                 }
             }
 
@@ -199,7 +188,6 @@ let table = new Vue({
                 for (let i = 0; i < shipLength; i++) {
                     let newID = letter + (Number(number) + i);
                     newIDs.push(newID)
-                    console.log(newIDs)
                 }
             } else {
                 for (let i = 0; i < shipLength; i++) {
@@ -212,7 +200,6 @@ let table = new Vue({
                             newIDs.push(newID);
                         }
                     }
-                    console.log(newIDs)
                 }
             }
 
@@ -221,12 +208,10 @@ let table = new Vue({
             if (isVerticalNow == true) {
                 //if ship is vertical, change it to horizontal
                 isVerticalNow = false;
-                console.log("NOW THE SHIP IS HORIZONTAL")
 
             } else {
                 //if ship is horizontal, change it to vertical
                 isVerticalNow = true;
-                console.log("NOW THE SHIP IS VERTICAL")
             }
 
             let locsOutGrid = [];
@@ -236,13 +221,10 @@ let table = new Vue({
                 locsOutGrid.push(document.getElementById(newIDs[i]));
             }
 
-            // console.log(locsOutGrid)
-
             if (!locsOutGrid.includes(null)) {
 
-                for (let i = 1; i < shipLength; i++) { // i had to start a 1 and not zero, as the boat rotate to himself
+                for (let i = 1; i < shipLength; i++) { // 'i' has to start a 1 and not zero, as the boat rotate to himself
                     if (locsOutGrid[i].classList.contains("empty") == false)
-
                     {
                         emptyCell.push(false) //cell is full
                     } else {
@@ -262,7 +244,6 @@ let table = new Vue({
 
         addRotateShip() {
             let rotateButton = document.getElementsByClassName("rotateShip")
-            // console.log(rotateButton)
             for (let i = 0; i < rotateButton.length; i++) {
                 rotateButton[i].innerHTML = "<img src=./styles/rotate.png width='10px' height='10px'>";
                 rotateButton[i].addEventListener("click", this.rotateShip)
@@ -271,15 +252,12 @@ let table = new Vue({
         dragStart(e) {
             table.occurence = 0; //necessary so that the alert msg doesnt pop up more than once
             table.alertMsg = false; //should start as false otherwise the alert msg will keep on popping up
-            console.log("START", e.target.id);
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
 
             this.shipLength = document.getElementById(e.target.id).getAttribute("data-shipLength");
             this.shipType = document.getElementById(e.target.id).getAttribute("data-shipType");
             this.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
-
-            console.log("THIS IS THE CURRENT SHIP LOCATION " + this.shipCurrentLoc);
 
             //check if vertical
             let boatLoc = [];
@@ -319,14 +297,9 @@ let table = new Vue({
             this.removeOldShip(table.allIDs)
         },
 
-        dragEnd(e) {
-            console.log("END", e.target.id);
-        },
-
         dragOver(e) {
             //dragOver is necessary otherwise the ship goes back to its original place
             e.preventDefault();
-            console.log("OVER", e.target.id);
 
             let shipCellID = e.target.id;
             let letter = shipCellID.substr(0, 1);
@@ -335,7 +308,6 @@ let table = new Vue({
             let newIDs = []
 
             if (shipCellID.length == 0) {
-                // console.log("HELLO")
                 table.outOfGrid = true;
             }
 
@@ -360,7 +332,6 @@ let table = new Vue({
         },
 
         dragLeave(e) {
-            console.log("LEAVE", e.target.id);
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
 
@@ -375,8 +346,6 @@ let table = new Vue({
             if (table.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
                     if (document.getElementById(newIDs[i]) == null) {
-                        // table.outOfGrid = true;
-                        console.log("out of grid")
                     } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
                         document.getElementById(newIDs[i]).classList.remove("rotateShip");
@@ -396,7 +365,6 @@ let table = new Vue({
 
         dragEnter(e) {
             e.preventDefault();
-            console.log("ENTER", e.target.id);
 
             let shipCellID = e.target.id;
             let letter = shipCellID.substr(0, 1);
@@ -424,11 +392,7 @@ let table = new Vue({
                 }
             }
 
-            console.log("DRAG ENTER NEW LOCATIONS ", newIDs)
-            // console.log("outside for")
             for (let i = 0; i < newIDs.length; i++) {
-                // console.log("inside for")
-                // table.fullCell = false;
                 if (document.getElementById(newIDs[i]) == null) {
                     table.outOfGrid = true;
                 } else if (document.getElementById(newIDs[i]).classList.contains("shipColor")) {
@@ -455,10 +419,8 @@ let table = new Vue({
         },
 
         dragDrop(e) {
-            console.log("DROP", e.target.id);
 
             let shipCellID = e.target.id;
-            console.log(shipCellID)
 
             let types = table.shipLocs;
 
@@ -485,10 +447,8 @@ let table = new Vue({
                     }
                 }
             }
-            console.log(newAllIDs)
 
                 if (table.fullCell == true || table.outOfGrid == true) {
-                    console.log("IF CELL IS FULL THIS FUNCTION RUNS")
                     //table.allIDs has the initial starting locations
                     this.makeShip(table.allIDs)
 
@@ -524,11 +484,10 @@ let table = new Vue({
                     shipLoc.push(tempShipLoc[z])
                 }
             }
-            console.log(shipLoc)
+
             for (let i = 0; i < salvoes.length; i++) {
                 let oppSalvo = salvoes[i].location;
                 let oppTurn = salvoes[i].turn;
-                console.log(oppTurn);
 
                 for (let y = 0; y < oppSalvo.length; y++) {
                     if (shipLoc.includes(oppSalvo[y])) {
@@ -626,7 +585,6 @@ let table = new Vue({
 
             let types = table.shipLocs;
 
-            console.log(shipIDs)
             for (let j = 0; j < shipLength; j++) {
                 document.getElementById(shipIDs[j]).classList.add("shipColor")
                 document.getElementById(shipIDs[j]).classList.add(type);
@@ -642,7 +600,6 @@ let table = new Vue({
 
                 for (let x = 0; x < types.length; x++) {
                     if (type == types[x].type) {
-                        console.log("this should be working")
                         types[x].location = shipIDs;
                     }
                 }

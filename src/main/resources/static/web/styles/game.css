@@ -44,20 +44,6 @@ table {
     background-color: blueviolet;
 }
 
-.eightbit { 
-    font-family: '8BITWONDERNominal'; 
-    font-weight: normal; 
-    font-style: normal; 
- }
-
  .spaceBetween {
      margin-top: 15px;
  }
-
- /* .playerShips {
-     font-size: 10px;
- }
-
- .playerShips p {
-     font-size: 15px;
- } */

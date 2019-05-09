@@ -14,7 +14,9 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
 
-    <!-- <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/8bit-wonder" type="text/css" /> -->
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -33,7 +35,7 @@
 <body class="indicator">
     <div id="app1" class="container last indicator">
 
-        <h1>BATTLESHIPS</h1>
+        <h1>RETROSHIPS</h1>
 
         <strong>PLAYERS:</strong>
         <p id="players"></p>
@@ -45,7 +47,7 @@
             <div class="indicator">
                 <p style="font-size: 15px;">Your Ships</p>
 
-                <div class="indicator" style="font-size: 10px;" v-for="ship in shipLocs"> {{ship.type}}
+                <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
                     {{ship.location}} </div>
 
                 <div class="indicator" v-if="shipLocs.length == 0">

@@ -6,13 +6,16 @@
     <title>Salvo Leaderboard</title>
     <link rel="stylesheet" href="./styles/games.css">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
-   
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
@@ -20,9 +23,15 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+    </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -31,40 +40,94 @@
 <body>
     <div id="app">
 
-        <nav class="navbar navbar-dark bg-primary">
+        <nav class="navbar">
             <div v-if="currentPlayer == `guest`">
                 <div class="text-center">
-                    <a class="btn btn-outline-warning" data-toggle="modal" data-target="#signIN"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+                    <a class="nes-btn is-warning" data-toggle="modal" data-target="#signIN"><i
+                            class="fas fa-sign-in-alt"></i>Sign In</a>
 
-                    <a class="btn btn-outline-success" data-toggle="modal" data-target="#signUP"><i class="fas fa-user-plus"></i>Sign Up</a>
+                    <a class="nes-btn is-success" data-toggle="modal" data-target="#signUP"><i
+                            class="fas fa-user-plus"></i>Sign Up</a>
                 </div>
             </div>
             <div v-else>
                 <form v-on:click="logout()" id="logout-form" onsubmit="return false">
-                    <a class="btn btn-outline-warning"><i class="fas fa-sign-out-alt"></i>Sign Out</a>
+                    <a class="nes-btn is-error"><i class="fas fa-sign-out-alt"></i>Sign Out</a>
                 </form>
             </div>
         </nav>
 
         <div class="container">
 
-                <h1>BATTLESHIPS</h1>
+            <h1>RETROSHIPS</h1>
 
-                <div v-if="currentPlayer != 'guest'">
-                        You're logged in as {{currentPlayer.player}}
-                </div>
-                
+            <div v-if="currentPlayer != 'guest'">
+                You're logged in as {{currentPlayer.player}}
+            </div>
+
 
             <h2>Games</h2>
-            <button type="button" v-on:click="createGame()" class="btn btn-warning">CREATE GAME</button>
-            <ol v-if="gameData.length > 0">
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 1"> {{game.id}} {{game.date}} {{game.gamePlayer[0].player.player}} vs is awaiting for a player <button :id="game.id" type="button" v-if="currentPlayer.player != game.gamePlayer[0].player.player" v-on:click="joinGame" class="btn btn-outline-success">JOIN</button>
-                <button type="button" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success">REJOIN</button>
-                 </li>
-                <li v-for="game in gameData" v-if="game.gamePlayer.length == 2"> {{game.id}} {{game.date}} {{game.gamePlayer[0].player.player}} vs {{game.gamePlayer[1].player.player}} <button data-game="game.id" type="button" id="gameCheck" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)" class="btn btn-outline-success">REJOIN</button></li>
-            </ol>
+            <button type="button" v-on:click="createGame()" class="nes-btn is-warning">CREATE GAME</button>
+            <div class="nes-table-responsive" v-if="gameData.length > 0">
+                <table class="nes-table is-bordered is-centered">
+                    <thead>
+                        <tr>
+                            <th>Game ID</th>
+                            <th>Game Date</th>
+                            <th>Player1</th>
+                            <th>Player2</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody v-for="game in gameData" v-if="game.gamePlayer.length == 1">
+                        <tr>
+                            <td>
+                                {{game.id}}
+                            </td>
+                            <td>
+                                {{game.date}}
+                            </td>
+                            <td>
+                                {{game.gamePlayer[0].player.player}}
+                            </td>
+                            <td>
+                                awaiting for a player
+                            </td>
+                            <td>
+                                    <button :id="game.id" type="button"
+                                    v-if="currentPlayer.player != game.gamePlayer[0].player.player" v-on:click="joinGame"
+                                    class="nes-btn is-success">JOIN</button>
+                                <button type="button" v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)"
+                                    class="nes-btn is-success">REJOIN</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody v-for="game in gameData" v-if="game.gamePlayer.length == 2">
+                        <tr>
+                            <td>
+                                {{game.id}}
+                            </td>
+                            <td>
+                                {{game.date}}
+                            </td>
+                            <td>
+                                {{game.gamePlayer[0].player.player}}
+                            </td>
+                            <td>
+                                {{game.gamePlayer[1].player.player}}
+                            </td>
+                            <td>
+                                <button data-game="game.id" type="button" id="gameCheck"
+                                    v-if="checkRejoin(game.gamePlayer)" v-on:click="createLink(game.gamePlayer)"
+                                    class="nes-btn is-success">REJOIN</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="modal fade" id="signUP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="signUP" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header text-center">
@@ -76,27 +139,28 @@
                         <form id="login-form" onsubmit="return false" action="/api/players">
                             <div class="modal-body mx-3">
                                 <div class="md-form">
-                                    <i class="fas fa-envelope prefix grey-text">UserName or Email</i>
-                                    <input id="email1" type="text" class="form-control validate" v-model="emailInput">
+                                    UserName or Email
+                                    <input id="email1" type="text" class="nes-input" v-model="emailInput">
                                     <label data-error="wrong" data-success="right" for="email1"></label>
                                 </div>
 
                                 <div class="md-form">
-                                    <i class="fas fa-lock prefix grey-text">Password</i>
-                                    <input id="pass1" type="password" class="form-control validate" v-model="passInput">
+                                    Password
+                                    <input id="pass1" type="password" class="nes-input" v-model="passInput">
                                     <label data-error="wrong" data-success="right" for="pass1"></label>
                                 </div>
 
                             </div>
                         </form>
                         <div class="modal-footer d-flex justify-content-center">
-                            <button v-on:click="signup()" class="btn btn-default">Sign Up</button>
+                            <button v-on:click="signup()" class="nes-btn">Sign Up</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal fade" id="signIN" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="signIN" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header text-center">
@@ -108,60 +172,61 @@
                         <form action="" id="form-login" onsubmit="return false">
                             <div class="modal-body mx-3">
                                 <div class="md-form">
-                                    <i class="fas fa-envelope prefix grey-text">UserName or Email</i>
-                                    <input type="text" id="email" class="form-control validate" v-model="emailInput">
+                                    UserName or Email
+                                    <input type="text" id="email" class="nes-input" v-model="emailInput">
                                     <label data-error="wrong" data-success="right" for="email"></label>
                                 </div>
 
                                 <div class="md-form">
-                                    <i class="fas fa-lock prefix grey-text">Password</i>
-                                    <input type="password" id="pass" class="form-control validate" v-model="passInput">
+                                    Password
+                                    <input type="password" id="pass" class="nes-input" v-model="passInput">
                                     <label data-error="wrong" data-success="right" for="pass"></label>
                                 </div>
 
                             </div>
                         </form>
                         <div class="modal-footer d-flex justify-content-center">
-                            <button v-on:click="login()" class="btn btn-default">Login</button>
+                            <button v-on:click="login()" class="nes-btn">Login</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>User</th>
-                        <th>Points</th>
-                        <th>Won</th>
-                        <th>Tied</th>
-                        <th>Lost</th>
-                        <th>Matches Played</th>
-                    </tr>
-                </thead>
-                <tbody >
-                   <tr v-for="player in leaderBoard">
-                    <td>
-                        {{player.name}}
-                    </td>
-                    <td>
-                        {{player.pts}}
-                    </td>
-                    <td>
-                        {{player.win}}
-                    </td>
-                    <td>
-                        {{player.tie}}
-                    </td>
-                    <td>
-                        {{player.lose}}
-                    </td>
-                    <td>
-                        {{player.all}}
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="nes-table-responsive">
+                <table class="nes-table is-bordered is-centered">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Points</th>
+                            <th>Won</th>
+                            <th>Tied</th>
+                            <th>Lost</th>
+                            <th>Matches Played</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="player in leaderBoard">
+                            <td>
+                                {{player.name}}
+                            </td>
+                            <td>
+                                {{player.pts}}
+                            </td>
+                            <td>
+                                {{player.win}}
+                            </td>
+                            <td>
+                                {{player.tie}}
+                            </td>
+                            <td>
+                                {{player.lose}}
+                            </td>
+                            <td>
+                                {{player.all}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

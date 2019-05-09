@@ -37,8 +37,8 @@
 
         <h1>RETROSHIPS</h1>
 
-        <strong>PLAYERS:</strong>
-        <p id="players"></p>
+        <p class="playersTitle"><strong>PLAYERS:</strong></p> 
+        <p class="playersTitle" id="players"></p>
         <div class="row">
             <div class="col-sm">
                 <h2>Ships</h2>
@@ -51,7 +51,7 @@
                     {{ship.location}} </div>
 
                 <div class="indicator" v-if="shipLocs.length == 0">
-                    <button id="placeShipButton" type="button" class="btn btn-success spaceBetween" v-on:click="getPlayerShips()">Place
+                    <button id="placeShipButton" type="button" class="nes-btn is-success spaceBetween" v-on:click="getPlayerShips()">Place
                         Ships</button>
                 </div>
             </div>

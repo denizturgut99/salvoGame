@@ -162,7 +162,27 @@ public class SalvoController {
         return dto;
     }
 
+    //place salvoes
+    @RequestMapping(path="/api/games/players/{gamePlayerID}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> firedSalvo(@PathVariable Long gamePlayerID, @RequestBody Salvo salvo, Authentication authentication) {
+        if(authentication == null) {
+            return new ResponseEntity<>(checkInfo("error", "You must be logged in to be able to fire salvoes!"), HttpStatus.UNAUTHORIZED);
+        }
 
+        GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerID);
+        Player currentPlayer = getLoggedPlayer(authentication);
+
+        if(gamePlayer.getPlayer().getId() != currentPlayer.getId()) {
+            return new ResponseEntity<>(checkInfo("error", "You can't fire salvoes for someone else"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer.getId() == null) {
+            return new ResponseEntity<>(checkInfo("error", "The given user doesn't exist"), HttpStatus.UNAUTHORIZED);
+        }
+
+
+
+    }
 
 
     public Map<String, Object> gamePlayerDTO(GamePlayer gamePlayer) {

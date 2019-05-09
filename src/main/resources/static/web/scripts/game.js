@@ -485,18 +485,21 @@ let table = new Vue({
                 }
             }
 
-            for (let i = 0; i < salvoes.length; i++) {
-                let oppSalvo = salvoes[i].location;
-                let oppTurn = salvoes[i].turn;
-
-                for (let y = 0; y < oppSalvo.length; y++) {
-                    if (shipLoc.includes(oppSalvo[y])) {
-                        document.getElementById(oppSalvo[y]).innerHTML = "HIT" + " " + oppTurn;
-                    } else {
-                        document.getElementById(oppSalvo[y]).innerHTML = "MISS" + " " + oppTurn;
+            if(salvoes != undefined) {
+                for (let i = 0; i < salvoes.length; i++) {
+                    let oppSalvo = salvoes[i].location;
+                    let oppTurn = salvoes[i].turn;
+    
+                    for (let y = 0; y < oppSalvo.length; y++) {
+                        if (shipLoc.includes(oppSalvo[y])) {
+                            document.getElementById(oppSalvo[y]).innerHTML = "HIT" + " " + oppTurn;
+                        } else {
+                            document.getElementById(oppSalvo[y]).innerHTML = "MISS" + " " + oppTurn;
+                        }
                     }
                 }
             }
+            
         },
         shipTable() {
             const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];

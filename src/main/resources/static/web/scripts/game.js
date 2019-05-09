@@ -315,17 +315,8 @@ let table = new Vue({
                     }
                 }
             }
-
             //add and remove attributes/classes in order to make the ship disappear until placed again
-            for (let i = 0; i < table.allIDs.length; i++) {
-                document.getElementById(table.allIDs[i]).removeAttribute("class");
-                document.getElementById(table.allIDs[0]).removeAttribute("draggable");
-                document.getElementById(table.allIDs[0]).innerHTML = "";
-                document.getElementById(table.allIDs[i]).removeAttribute("data-shipLength");
-                document.getElementById(table.allIDs[i]).removeAttribute("data-shipType");
-                document.getElementById(table.allIDs[i]).removeAttribute("data-shipLocs");
-                document.getElementById(table.allIDs[i]).classList.add("empty");
-            }
+            this.removeOldShip(table.allIDs)
         },
 
         dragEnd(e) {
@@ -496,57 +487,15 @@ let table = new Vue({
             }
             console.log(newAllIDs)
 
-            for (let i = 0; i < newAllIDs.length - 1; i++) {
                 if (table.fullCell == true || table.outOfGrid == true) {
                     console.log("IF CELL IS FULL THIS FUNCTION RUNS")
                     //table.allIDs has the initial starting locations
-                    for (let j = 0; j < table.allIDs.length; j++) {
-                        document.getElementById(table.allIDs[j]).classList.add("shipColor")
-                        document.getElementById(table.allIDs[j]).classList.add(table.shipType);
-                        document.getElementById(table.allIDs[0]).classList.add("rotateShip");
-                        document.getElementById(table.allIDs[0]).addEventListener("click", this.rotateShip);
-                        document.getElementById(table.allIDs[j]).classList.remove("empty")
-                        // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
-                        document.getElementById(table.allIDs[0]).setAttribute("draggable", "true");
-                        document.getElementById(table.allIDs[j]).setAttribute('data-shipType', table.shipType);
-                        document.getElementById(table.allIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
-                        document.getElementById(table.allIDs[0]).addEventListener("dragstart", this.dragStart);
-                        document.getElementById(table.allIDs[j]).setAttribute("data-shipLength", table.allIDs.length);
-
-                        for (let x = 0; x < types.length; x++) {
-                            if (this.shipType == types[x].type) {
-                                types[x].location = table.allIDs;
-                            }
-                        }
-                        table.addRotateShip();
-                    }
-                    table.allIDs = [];
+                    this.makeShip(table.allIDs)
 
                 } else if (table.fullCell == false || table.outOfGrid == false) {
-                    for (let i = 0; i < newAllIDs.length; i++) {
-                        console.log("if full cell is FALSE this function runs")
-                        document.getElementById(newAllIDs[i]).classList.add("shipColor")
-                        document.getElementById(newAllIDs[i]).classList.add(table.shipType);
-                        document.getElementById(newAllIDs[0]).classList.add("rotateShip");
-                        document.getElementById(newAllIDs[0]).addEventListener("click", this.rotateShip);
-                        // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
-                        document.getElementById(newAllIDs[i]).classList.remove("empty")
-                        document.getElementById(newAllIDs[0]).setAttribute("draggable", "true");
-                        document.getElementById(newAllIDs[i]).setAttribute('data-shipType', table.shipType);
-                        document.getElementById(newAllIDs[i]).setAttribute('data-shipLocs', newAllIDs);
-                        document.getElementById(newAllIDs[0]).addEventListener("dragstart", this.dragStart);
-                        document.getElementById(newAllIDs[i]).setAttribute("data-shipLength", newAllIDs.length);
-
-                        for (let j = 0; j < types.length; j++) {
-                            if (this.shipType == types[j].type) {
-                                types[j].location = newAllIDs;
-                            }
-                        }
-                        table.addRotateShip();
-                    }
-                    table.allIDs = [];
+                    this.makeShip(newAllIDs)
                 }
-            }
+            
         },
 
         showSalvoes() {

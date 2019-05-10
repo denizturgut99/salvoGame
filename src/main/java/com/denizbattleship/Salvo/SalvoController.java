@@ -92,7 +92,8 @@ public class SalvoController {
         } else {
 
             for(Ship ship : ships){
-                gamePlayer.addShip(ship);
+                //gamePlayer.addShip(ship);
+                ship.setGamePlayer(gamePlayer);
                 shipRepository.save(ship);
             }
 
@@ -162,7 +163,7 @@ public class SalvoController {
         return dto;
     }
 
-    //place salvoes
+    //place salvos
     @RequestMapping(path="/api/games/players/{gamePlayerID}/salvos", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> firedSalvo(@PathVariable Long gamePlayerID, @RequestBody Salvo salvo, Authentication authentication) {
         if(authentication == null) {

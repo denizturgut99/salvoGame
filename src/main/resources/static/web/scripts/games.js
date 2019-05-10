@@ -38,7 +38,6 @@ let app = new Vue({
 
             for (let i = 0; i < games.length; i++) {
                 let sc = games[i].scores;
-                //                console.log(sc);
                 app.gameScores.push(sc); //player and score gets pushed into gameScore
             }
         },
@@ -70,9 +69,6 @@ let app = new Vue({
                     }
                 })
             }
-            //            console.log(filtered)
-            //            console.log(playerScores)
-            //            console.log(pl)
 
             //calculate the player wins, ties and losses
             for (let i = 0; i < filtered.length; i++) {
@@ -104,7 +100,6 @@ let app = new Vue({
                     }
                 }
             }
-            //            this.leaderBoard = pl
             //sorts the total score from highest to the lowest
             var sortedValues = pl.sort((a, b) => a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : 0);
             //            var sortedValues2 = pl.sort((a, b) => a.pts > b.pts ? 1 : a.win > b.win ? -1 : 0);
@@ -114,9 +109,6 @@ let app = new Vue({
                     if (sortedValues[i].pts == sortedValues[j].pts) {
                         this.leaderBoard = sortedValues;
                     }
-                    //                    else if (sortedValues[i].pts > sortedValues[j].pts) {
-                    //                        this.leaderBoard = sortedValues;
-                    //                    }
                 }
             }
         },
@@ -147,7 +139,6 @@ let app = new Vue({
                 body.push(encKey + "=" + encVal);
             }
             return body.join("&");
-            console.log(body);
         },
         login() {
             fetch("/api/login", {
@@ -166,7 +157,6 @@ let app = new Vue({
                         alert(data.error)
                     } else {
                         location.reload(true)
-                        console.log("ALL good!")
                     }
                 })
                 .catch(function (error) {
@@ -204,7 +194,6 @@ let app = new Vue({
                         alert("Please check your UserName/Email and password")
                     } else {
                         app.login();
-                        console.log("ALL good!")
                     }
 
                 })

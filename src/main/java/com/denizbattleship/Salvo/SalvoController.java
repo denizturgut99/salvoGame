@@ -95,6 +95,7 @@ public class SalvoController {
                 //gamePlayer.addShip(ship);
                 ship.setGamePlayer(gamePlayer);
                 shipRepository.save(ship);
+                System.out.println(ship.getLocations());
             }
 
             return new ResponseEntity<>(checkInfo("OK", "Ships are saved."), HttpStatus.CREATED);
@@ -164,26 +165,7 @@ public class SalvoController {
     }
 
     //place salvos
-    @RequestMapping(path="/api/games/players/{gamePlayerID}/salvos", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> firedSalvo(@PathVariable Long gamePlayerID, @RequestBody Salvo salvo, Authentication authentication) {
-        if(authentication == null) {
-            return new ResponseEntity<>(checkInfo("error", "You must be logged in to be able to fire salvoes!"), HttpStatus.UNAUTHORIZED);
-        }
 
-        GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerID);
-        Player currentPlayer = getLoggedPlayer(authentication);
-
-        if(gamePlayer.getPlayer().getId() != currentPlayer.getId()) {
-            return new ResponseEntity<>(checkInfo("error", "You can't fire salvoes for someone else"), HttpStatus.UNAUTHORIZED);
-        }
-
-        if(gamePlayer.getId() == null) {
-            return new ResponseEntity<>(checkInfo("error", "The given user doesn't exist"), HttpStatus.UNAUTHORIZED);
-        }
-
-
-
-    }
 
 
     public Map<String, Object> gamePlayerDTO(GamePlayer gamePlayer) {
@@ -304,7 +286,7 @@ public class SalvoController {
     private Map<String, Object> salvoDTO(Salvo salvo) {
         Map<String, Object> makeSalvoDTO = new HashMap<>();
         makeSalvoDTO.put("turn", salvo.getTurn());
-        makeSalvoDTO.put("location", salvo.getLocations());
+        makeSalvoDTO.put("locations", salvo.getLocations());
 
         return makeSalvoDTO;
     }
@@ -312,7 +294,7 @@ public class SalvoController {
     private Map<String, Object> shipDTO(Ship ship) {
         Map<String, Object> makeShipDTO = new HashMap<>();
         makeShipDTO.put("type", ship.getType());
-        makeShipDTO.put("location", ship.getLocations());
+        makeShipDTO.put("locations", ship.getLocations());
 
         return makeShipDTO;
     }

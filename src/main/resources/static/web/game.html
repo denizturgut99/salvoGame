@@ -48,7 +48,7 @@
                 <p style="font-size: 15px;">Your Ships</p>
 
                 <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
-                    {{ship.location}} </div>
+                    {{ship.locations}} </div>
 
                 <div class="indicator" v-if="shipLocs.length == 5">
                     <button id="placeShipButton" type="button" class="nes-btn is-success spaceBetween" v-on:click="getPlayerShips()">Place

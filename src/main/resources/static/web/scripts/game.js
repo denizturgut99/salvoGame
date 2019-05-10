@@ -29,27 +29,27 @@ let table = new Vue({
         gameState: "placingShips",
         shipPositions: [{
                 type: "Carrier",
-                location: ["A1", "B1", "C1", "D1", "E1"],
-                lenth: 5
+                locations: ["A1", "B1", "C1", "D1", "E1"],
+                length: 5
             },
             {
                 type: "Submarine",
-                location: ["H5", "H6", "H7"],
+                locations: ["H5", "H6", "H7"],
                 length: 3
             },
             {
                 type: "Battleship",
-                location: ["A5", "A6", "A7", "A8"],
+                locations: ["A5", "A6", "A7", "A8"],
                 length: 4
             },
             {
                 type: "PatrolBoat",
-                location: ["E5", "E6"],
+                locations: ["E5", "E6"],
                 length: 2
             },
             {
                 type: "Destroyer",
-                location: ["D3", "E3", "F3"],
+                locations: ["D3", "E3", "F3"],
                 length: 3
             }
         ]
@@ -70,9 +70,16 @@ let table = new Vue({
                         history.go(-1)
                     }
                     table.gameData = gameJson;
-                    gameJson.game.ships = table.shipPositions;
-                    table.shipLocs = gameJson.game.ships;
-                    gameJson.game.ships = table.newPositions;
+
+                    table.shipLocs = table.shipPositions
+                    console.log(table.shipLocs)
+                    console.log(gameJson.game.ships.length)
+
+                    if (gameJson.game.ships.length != 0) {
+                        table.shipLocs = gameJson.game.ships
+                        table.gameState = "playing"
+                    }
+
                     table.salvoLocs = gameJson.game.MySalvoes;
                     table.oppSalvoLocs = gameJson.game.OpponentSalvoes;
                     table.userName = gameJson.game.gamePlayer;
@@ -115,10 +122,10 @@ let table = new Vue({
             }
         },
         showShips() {
-            let ships = table.shipPositions;
+            let ships = table.shipLocs;
 
             for (let i = 0; i < ships.length; i++) {
-                let locs = ships[i].location;
+                let locs = ships[i].locations;
                 let types = ships[i].type;
 
                 for (let j = 0; j < locs.length; j++) {
@@ -141,18 +148,18 @@ let table = new Vue({
                     let filled = document.getElementsByClassName("shipColor");
                     let indicators = document.getElementsByClassName("indicator");
 
-                    if(table.gameState == "placingShips") {
+                    if (table.gameState == "placingShips") {
                         for (let empty of empties) {
                             empty.addEventListener("dragover", this.dragOver);
                             empty.addEventListener("dragenter", this.dragEnter);
                             empty.addEventListener("dragleave", this.dragLeave);
                             empty.addEventListener("drop", this.dragDrop);
                         }
-    
+
                         for (let fill of filled) {
                             fill.addEventListener("dragstart", this.dragStart);
                         }
-    
+
                         for (let indicator of indicators) {
                             indicator.addEventListener("dragover", this.dragOver);
                             indicator.addEventListener("dragenter", this.dragEnter);
@@ -230,8 +237,7 @@ let table = new Vue({
             if (!locsOutGrid.includes(null)) {
 
                 for (let i = 1; i < shipLength; i++) { // 'i' has to start a 1 and not zero, as the boat rotate to himself
-                    if (locsOutGrid[i].classList.contains("empty") == false)
-                    {
+                    if (locsOutGrid[i].classList.contains("empty") == false) {
                         emptyCell.push(false) //cell is full
                     } else {
                         emptyCell.push(true) //cell is empty
@@ -249,10 +255,12 @@ let table = new Vue({
         },
 
         addRotateShip() {
-            let rotateButton = document.getElementsByClassName("rotateShip")
-            for (let i = 0; i < rotateButton.length; i++) {
-                rotateButton[i].innerHTML = "<img src=./styles/rotate.png width='10px' height='10px'>";
-                rotateButton[i].addEventListener("click", this.rotateShip)
+            if (table.gameState == "placingShips") {
+                let rotateButton = document.getElementsByClassName("rotateShip")
+                for (let i = 0; i < rotateButton.length; i++) {
+                    rotateButton[i].innerHTML = "<img src=./styles/rotate.png width='10px' height='10px'>";
+                    rotateButton[i].addEventListener("click", this.rotateShip)
+                }
             }
         },
         dragStart(e) {
@@ -351,8 +359,7 @@ let table = new Vue({
 
             if (table.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
-                    if (document.getElementById(newIDs[i]) == null) {
-                    } else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
+                    if (document.getElementById(newIDs[i]) == null) {} else if (!document.getElementById(newIDs[i]).classList.contains("shipColor")) {
                         document.getElementById(newIDs[i]).classList.remove("shipColor");
                         document.getElementById(newIDs[i]).classList.remove("rotateShip");
                         document.getElementById(newIDs[i]).innerHTML = "";
@@ -454,20 +461,20 @@ let table = new Vue({
                 }
             }
 
-                if (table.fullCell == true || table.outOfGrid == true) {
-                    //table.allIDs has the initial starting locations
-                    this.makeShip(table.allIDs)
+            if (table.fullCell == true || table.outOfGrid == true) {
+                //table.allIDs has the initial starting locations
+                this.makeShip(table.allIDs)
 
-                } else if (table.fullCell == false || table.outOfGrid == false) {
-                    this.makeShip(newAllIDs)
-                }
+            } else if (table.fullCell == false || table.outOfGrid == false) {
+                this.makeShip(newAllIDs)
+            }
         },
 
         showSalvoes() {
             let salvoes = table.salvoLocs;
 
             for (let i = 0; i < salvoes.length; i++) {
-                let locs = salvoes[i].location;
+                let locs = salvoes[i].locations;
                 let turns = salvoes[i].turn;
 
                 for (let j = 0; j < locs.length; j++) {
@@ -482,7 +489,7 @@ let table = new Vue({
             let shipLoc = [];
 
             for (let j = 0; j < ships.length; j++) {
-                let tempShipLoc = ships[j].location;
+                let tempShipLoc = ships[j].locations;
 
                 for (let z = 0; z < tempShipLoc.length; z++) {
 
@@ -490,11 +497,11 @@ let table = new Vue({
                 }
             }
 
-            if(salvoes != undefined) {
+            if (salvoes != undefined) {
                 for (let i = 0; i < salvoes.length; i++) {
-                    let oppSalvo = salvoes[i].location;
+                    let oppSalvo = salvoes[i].locations;
                     let oppTurn = salvoes[i].turn;
-    
+
                     for (let y = 0; y < oppSalvo.length; y++) {
                         if (shipLoc.includes(oppSalvo[y])) {
                             document.getElementById(oppSalvo[y]).innerHTML = "H" + " " + oppTurn;
@@ -504,7 +511,7 @@ let table = new Vue({
                     }
                 }
             }
-            
+
         },
         shipTable() {
             const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -608,7 +615,8 @@ let table = new Vue({
 
                 for (let x = 0; x < types.length; x++) {
                     if (type == types[x].type) {
-                        types[x].location = shipIDs;
+                        types[x].locations = shipIDs;
+                        table.newPositions = types;
                     }
                 }
             }
@@ -617,7 +625,7 @@ let table = new Vue({
         },
         makeShip(shipID) {
 
-            let types = table.shipPositions;
+            let types = table.shipLocs;
 
             for (let j = 0; j < shipID.length; j++) {
                 document.getElementById(shipID[j]).classList.add("shipColor")
@@ -634,8 +642,8 @@ let table = new Vue({
 
                 for (let x = 0; x < types.length; x++) {
                     if (this.shipType == types[x].type) {
-                        types[x].location = shipID;
-                        table.newPositions=types;
+                        types[x].locations = shipID;
+                        table.newPositions = types;
                     }
                 }
                 table.addRotateShip();
@@ -650,8 +658,9 @@ let table = new Vue({
             return this.linkID = vars;
         },
         getPlayerShips() {
-            let gamePlayerID = this.linkID.substr(0,2)
-            let newLocs = table.newPositions;
+            let gamePlayerID = this.linkID.substr(0, 2)
+            let newLocs = this.newPositions;
+            console.log(newLocs)
 
             let url = "/api/games/players/" + gamePlayerID + "/ships"
 

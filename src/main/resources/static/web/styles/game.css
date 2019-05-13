@@ -59,3 +59,11 @@ h1 {
      padding-right: 2px !important;
      padding-left: 2px !important; 
  }
+
+ .hitSalvo {
+     background-color: red !important;
+ }
+
+ .missSalvo {
+     background-color: aqua !important;
+ }

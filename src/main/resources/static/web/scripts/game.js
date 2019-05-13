@@ -13,6 +13,7 @@ let table = new Vue({
         userName: [],
         matchPlayers: [],
         salvoLocs: [],
+        firedSalvo: 0,
         oppID: [],
         oppSalvoLocs: [],
         playerShips: [],
@@ -72,8 +73,6 @@ let table = new Vue({
                     table.gameData = gameJson;
 
                     table.shipLocs = table.shipPositions
-                    console.log(table.shipLocs)
-                    console.log(gameJson.game.ships.length)
 
                     if (gameJson.game.ships.length != 0) {
                         table.shipLocs = gameJson.game.ships
@@ -272,7 +271,7 @@ let table = new Vue({
             this.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
 
             //check if vertical
-            let boatLoc = [];
+            let boatLoc = []; //has the current locations
             let getShipType = document.getElementsByClassName(table.shipType);
 
             for (let i = 0; i < getShipType.length; i++) {
@@ -463,7 +462,7 @@ let table = new Vue({
                 let turns = salvoes[i].turn;
 
                 for (let j = 0; j < locs.length; j++) {
-                    document.getElementById(locs[j] + "opp").style.backgroundColor = "orange";
+                    document.getElementById(locs[j] + "opp").classList.add("hitSalvo")
                     document.getElementById(locs[j] + "opp").innerHTML = "S" + " " + turns;
                 }
             }
@@ -489,14 +488,15 @@ let table = new Vue({
 
                     for (let y = 0; y < oppSalvo.length; y++) {
                         if (shipLoc.includes(oppSalvo[y])) {
-                            document.getElementById(oppSalvo[y]).innerHTML = "H" + " " + oppTurn;
+                            // document.getElementById(oppSalvo[y]).innerHTML = "H" + " " + oppTurn;
+                            document.getElementById(oppSalvo[y]).classList.add("hitSalvo")
                         } else {
-                            document.getElementById(oppSalvo[y]).innerHTML = "M" + " " + oppTurn;
+                            // document.getElementById(oppSalvo[y]).innerHTML = "M" + " " + oppTurn;
+                            document.getElementById(oppSalvo[y]).classList.add("missSalvo")
                         }
                     }
                 }
             }
-
         },
         shipTable() {
             const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -555,17 +555,22 @@ let table = new Vue({
 
                     if (i == 0 && j > 0) {
                         td.textContent = j;
+                        td.classList.add("indicator")
                         td.style.backgroundColor = "black";
                         //number start from 1 and the very first cell gets left empty
                     }
 
                     if (i >= 0 && j == 0) {
                         td.textContent = letters[i];
+                        td.classList.add("indicator")
                         td.style.backgroundColor = "black";
                         //the first element in the letters array gets ignored and put in the table, this also avoids the repetition of the letters array into the other cells
                     }
-                }
 
+                    if (!td.classList.contains("indicator")) {
+                        td.addEventListener("click", this.fireSalvo)
+                    }
+                }
             }
             myTable.appendChild(table)
             document.getElementById("0opp").removeAttribute("id")
@@ -646,7 +651,6 @@ let table = new Vue({
         getPlayerShips() {
             let gamePlayerID = this.linkID.substr(0, 2)
             let newLocs = this.newPositions;
-            console.log(newLocs)
 
             let url = "/api/games/players/" + gamePlayerID + "/ships"
 
@@ -672,6 +676,46 @@ let table = new Vue({
                     }
                 })
                 .catch(error => console.log(error))
+        },
+        sendSalvo() {
+            let gamePlayerID = this.linkID.substr(0, 2);
+            let url = "/api/games/players/" + gamePlayerID + "/salvos";
+            let locs = table.salvoLocs
+
+            fetch(url, {
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(locs)
+                })
+                .then(function (response) {
+                    return response.json
+                })
+                .then(function (gameJson) {
+                    if (gameJson.hasOwnProperty("error")) {
+                        alert(gameJson.error)
+                    }
+                    table.firedSalvo = 0
+                    table.salvoLocs = []
+                })
+                .catch(error => console.log(error))
+        },
+        fireSalvo(e) {
+            let id = e.target.id;
+            let salvoCount = table.firedSalvo;
+
+            if (!table.salvoLocs.includes(id)) {
+                table.salvoLocs.push(id)
+                document.getElementById(id).classList.add("hitSalvo")
+                salvoCount++
+            }
+
+            if (table.firedSalvo > 5) {
+                alert("You can't fire more than 5 salvoes") //player is not allowed to fire more than 5 salvoes
+            }
         }
     }
 });

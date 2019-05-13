@@ -165,7 +165,39 @@ public class SalvoController {
     }
 
     //place salvos
+    @RequestMapping(path="/api/games/players/{gamePlayerId}/salvos")
+    public ResponseEntity<Map<String, Object>> fireSalvos (@PathVariable Long gamePlayerId, @RequestBody Salvo salvo, Authentication authentication) {
 
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).orElse(null);
+        Player currentPlayer = getLoggedPlayer(authentication);
+
+        if(authentication == null) {
+            return new ResponseEntity<>(checkInfo("error", "You have to be logged in to be able to play"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayerId == null) {
+            return new ResponseEntity<>(checkInfo("error", "There is no player with this given game player id"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer.getPlayer().getId() != currentPlayer.getId()) {
+            return new ResponseEntity<>(checkInfo("error", "You can't fire salvos for someone else other than yourself"), HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer oppSalvoes = opponent(gamePlayer); //gets the opponent
+
+        int gpTurn = gamePlayer.getSalvo().size() + 1; //amount of salvos fired by the current player and add 1 more turn to identify the turn has been finished
+        int oppTurn = oppSalvoes.getSalvo().size() + 1; //same thing but for the opponent
+
+        if(gpTurn > oppTurn + 1) {
+           return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
+        }
+
+        salvo.setGamePlayer(gamePlayer); //game players have been saved to their salvoes
+        gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
+        salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
+
+        return new ResponseEntity<>(checkInfo("OK", "Salvo locations have been set!"), HttpStatus.CREATED);
+    }
 
 
     public Map<String, Object> gamePlayerDTO(GamePlayer gamePlayer) {

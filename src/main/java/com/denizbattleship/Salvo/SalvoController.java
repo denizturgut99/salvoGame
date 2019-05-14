@@ -95,7 +95,6 @@ public class SalvoController {
                 //gamePlayer.addShip(ship);
                 ship.setGamePlayer(gamePlayer);
                 shipRepository.save(ship);
-                System.out.println(ship.getLocations());
             }
 
             return new ResponseEntity<>(checkInfo("OK", "Ships are saved."), HttpStatus.CREATED);
@@ -165,11 +164,14 @@ public class SalvoController {
     }
 
     //place salvos
-    @RequestMapping(path="/api/games/players/{gamePlayerId}/salvos")
-    public ResponseEntity<Map<String, Object>> fireSalvos (@PathVariable Long gamePlayerId, @RequestBody Salvo salvo, Authentication authentication) {
+    @RequestMapping(path="/api/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> fireSalvos (@PathVariable Long gamePlayerId, @RequestBody List<String> salvos, Authentication authentication) {
 
         GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).orElse(null);
+        GamePlayer currentGP = gamePlayerRepository.getOne(gamePlayerId);
+        Set<Salvo> firedSalvoes = currentGP.getSalvo();
         Player currentPlayer = getLoggedPlayer(authentication);
+        GamePlayer oppSalvoes = opponent(gamePlayer); //gets the opponent
 
         if(authentication == null) {
             return new ResponseEntity<>(checkInfo("error", "You have to be logged in to be able to play"), HttpStatus.UNAUTHORIZED);
@@ -183,8 +185,6 @@ public class SalvoController {
             return new ResponseEntity<>(checkInfo("error", "You can't fire salvos for someone else other than yourself"), HttpStatus.UNAUTHORIZED);
         }
 
-        GamePlayer oppSalvoes = opponent(gamePlayer); //gets the opponent
-
         int gpTurn = gamePlayer.getSalvo().size() + 1; //amount of salvos fired by the current player and add 1 more turn to identify the turn has been finished
         int oppTurn = oppSalvoes.getSalvo().size() + 1; //same thing but for the opponent
 
@@ -192,9 +192,12 @@ public class SalvoController {
            return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
         }
 
-        salvo.setGamePlayer(gamePlayer); //game players have been saved to their salvoes
-        gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
-        salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
+        Salvo salvo = new Salvo(gpTurn, salvos);
+
+            gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
+            salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
+            System.out.println(salvo.getLocations());
+
 
         return new ResponseEntity<>(checkInfo("OK", "Salvo locations have been set!"), HttpStatus.CREATED);
     }

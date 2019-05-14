@@ -654,7 +654,7 @@ let table = new Vue({
 
             let url = "/api/games/players/" + gamePlayerID + "/ships"
 
-            fetch(url, {
+                fetch(url, {
                     credentials: 'include',
                     mode: 'cors',
                     cache: 'default',
@@ -681,15 +681,24 @@ let table = new Vue({
             let gamePlayerID = this.linkID.substr(0, 2);
             let url = "/api/games/players/" + gamePlayerID + "/salvos";
             let locs = table.salvoLocs
+            let newLocs = []
+            
+            console.log(locs)
+            for(let i = 0; i < locs.length; i++) {
+                newLocs.push(locs[i].substr(0,2))
+            }
+            
+            console.log(newLocs)
 
-            fetch(url, {
+            if (newLocs.length == 5 && table.matchPlayers.length == 2) {
+                fetch(url, {
                     credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
                     method: 'POST',
-                    body: JSON.stringify(locs)
+                    body: JSON.stringify(newLocs)
                 })
                 .then(function (response) {
                     return response.json
@@ -697,20 +706,27 @@ let table = new Vue({
                 .then(function (gameJson) {
                     if (gameJson.hasOwnProperty("error")) {
                         alert(gameJson.error)
+                    } else {
+                        window.location.reload(true)
                     }
                     table.firedSalvo = 0
-                    table.salvoLocs = []
                 })
                 .catch(error => console.log(error))
+            } else if(newLocs.length < 5 || newLocs.length > 5) {
+                alert("You have to place 5 salvoes, no more, no less!")
+            } else {
+                alert("There has to be atleast 2 players for you to be able to fire your salvoes")
+            }
         },
         fireSalvo(e) {
             let id = e.target.id;
-            let salvoCount = table.firedSalvo;
 
             if (!table.salvoLocs.includes(id)) {
                 table.salvoLocs.push(id)
                 document.getElementById(id).classList.add("hitSalvo")
-                salvoCount++
+                table.firedSalvo++
+            } else {
+                alert("You can't fire at the same location more than once")
             }
 
             if (table.firedSalvo > 5) {

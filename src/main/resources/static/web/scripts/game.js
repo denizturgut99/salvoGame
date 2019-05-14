@@ -13,6 +13,7 @@ let table = new Vue({
         userName: [],
         matchPlayers: [],
         salvoLocs: [],
+        newSalvoLocs: [],
         firedSalvo: 0,
         oppID: [],
         oppSalvoLocs: [],
@@ -680,12 +681,13 @@ let table = new Vue({
         sendSalvo() {
             let gamePlayerID = this.linkID.substr(0, 2);
             let url = "/api/games/players/" + gamePlayerID + "/salvos";
-            let locs = table.salvoLocs
+            let locs = table.newSalvoLocs
             let newLocs = []
-            
             console.log(locs)
-            for(let i = 0; i < locs.length; i++) {
-                newLocs.push(locs[i].substr(0,2))
+           
+            for(let i = 0; i < table.newSalvoLocs.length; i++) {
+                console.log(table.newSalvoLocs[i])
+                newLocs.push(table.newSalvoLocs[i])
             }
             
             console.log(newLocs)
@@ -706,23 +708,21 @@ let table = new Vue({
                 .then(function (gameJson) {
                     if (gameJson.hasOwnProperty("error")) {
                         alert(gameJson.error)
-                    } else {
-                        window.location.reload(true)
-                    }
+                    } 
+                    // else {
+                    //     window.location.reload(true)
+                    // }
                     table.firedSalvo = 0
+                    // table.salvoLocs = []
                 })
                 .catch(error => console.log(error))
-            } else if(newLocs.length < 5 || newLocs.length > 5) {
-                alert("You have to place 5 salvoes, no more, no less!")
-            } else {
-                alert("There has to be atleast 2 players for you to be able to fire your salvoes")
-            }
+            } 
         },
         fireSalvo(e) {
             let id = e.target.id;
-
-            if (!table.salvoLocs.includes(id)) {
-                table.salvoLocs.push(id)
+            console.log(id)
+            if (!table.newSalvoLocs.includes(id.substr(0,2)) || !document.getElementById(id).classList.contains("hitSalvo")) {
+                table.newSalvoLocs.push(id.substr(0,2))
                 document.getElementById(id).classList.add("hitSalvo")
                 table.firedSalvo++
             } else {

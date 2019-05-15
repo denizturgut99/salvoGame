@@ -655,7 +655,7 @@ let table = new Vue({
 
             let url = "/api/games/players/" + gamePlayerID + "/ships"
 
-                fetch(url, {
+            fetch(url, {
                     credentials: 'include',
                     mode: 'cors',
                     cache: 'default',
@@ -679,59 +679,74 @@ let table = new Vue({
                 .catch(error => console.log(error))
         },
         sendSalvo() {
-            let gamePlayerID = this.linkID.substr(0, 2);
-            let url = "/api/games/players/" + gamePlayerID + "/salvos";
-            let locs = table.newSalvoLocs
-            let newLocs = []
-            console.log(locs)
-           
-            for(let i = 0; i < table.newSalvoLocs.length; i++) {
-                console.log(table.newSalvoLocs[i])
-                newLocs.push(table.newSalvoLocs[i])
-            }
-            
-            console.log(newLocs)
+            if (table.gameState === "playing") {
+                let gamePlayerID = this.linkID.substr(0, 2);
+                let url = "/api/games/players/" + gamePlayerID + "/salvos";
+                let locs = table.newSalvoLocs
+                let newLocs = []
+                console.log(locs)
 
-            if (newLocs.length == 5 && table.matchPlayers.length == 2) {
-                fetch(url, {
-                    credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST',
-                    body: JSON.stringify(newLocs)
-                })
-                .then(function (response) {
-                    return response.json
-                })
-                .then(function (gameJson) {
-                    if (gameJson.hasOwnProperty("error")) {
-                        alert(gameJson.error)
-                    } 
-                    // else {
-                    //     window.location.reload(true)
-                    // }
-                    table.firedSalvo = 0
-                    // table.salvoLocs = []
-                })
-                .catch(error => console.log(error))
-            } 
+                for (let i = 0; i < table.newSalvoLocs.length; i++) {
+                    console.log(table.newSalvoLocs[i])
+                    newLocs.push(table.newSalvoLocs[i])
+                }
+
+                console.log(newLocs)
+
+                if (table.firedSalvo == 5 && table.matchPlayers.length == 2) {
+                    fetch(url, {
+                            credentials: 'include',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            method: 'POST',
+                            body: JSON.stringify(newLocs)
+                        })
+                        .then(function (response) {
+                            return response.json
+                        })
+                        .then(function (gameJson) {
+                            if (gameJson.hasOwnProperty("error")) {
+                                alert(gameJson.error)
+                            } else {
+                                window.location.reload(true)
+                            }
+                            table.firedSalvo = 0
+                            // table.salvoLocs = []
+                        })
+                        .catch(error => console.log(error))
+                } else {
+                    alert("You can only fire 5 salvos")
+                    window.location.reload(true)
+                }
+            } else {
+                alert("You need to place ships first!")
+            }
         },
         fireSalvo(e) {
             let id = e.target.id;
-            console.log(id)
-            if (!table.newSalvoLocs.includes(id.substr(0,2)) || !document.getElementById(id).classList.contains("hitSalvo")) {
-                table.newSalvoLocs.push(id.substr(0,2))
-                document.getElementById(id).classList.add("hitSalvo")
-                table.firedSalvo++
-            } else {
-                alert("You can't fire at the same location more than once")
+            let firedCell = []
+
+            for (let i = 0; i < table.salvoLocs.length; i++) {
+                let loc1 = table.salvoLocs[i].locations;
+
+                for (let y = 0; y < loc1.length; y++) {
+                    loc2 = loc1[y]
+                    firedCell.push(loc2)
+                }
             }
 
-            if (table.firedSalvo > 5) {
-                alert("You can't fire more than 5 salvoes") //player is not allowed to fire more than 5 salvoes
+            console.log(id)
+
+            if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo")) {
+                alert("You can't fire at the same location more than once")
+            } else {
+                table.newSalvoLocs.push(id.replace("opp", ""))
+                document.getElementById(id).classList.add("hitSalvo")
+                table.firedSalvo++
             }
+
         }
     }
 });

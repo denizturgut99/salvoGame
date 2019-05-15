@@ -188,7 +188,7 @@ public class SalvoController {
         int gpTurn = gamePlayer.getSalvo().size() + 1; //amount of salvos fired by the current player and add 1 more turn to identify the turn has been finished
         int oppTurn = oppSalvoes.getSalvo().size() + 1; //same thing but for the opponent
 
-        if(gpTurn > oppTurn + 1) {
+        if(gpTurn > oppTurn) {
            return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
         }
 

@@ -725,28 +725,29 @@ let table = new Vue({
             }
         },
         fireSalvo(e) {
-            let id = e.target.id;
-            let firedCell = []
+            if (table.firedSalvo < 5) {
+                let id = e.target.id;
+                let firedCell = []
 
-            for (let i = 0; i < table.salvoLocs.length; i++) {
-                let loc1 = table.salvoLocs[i].locations;
+                for (let i = 0; i < table.salvoLocs.length; i++) {
+                    let loc1 = table.salvoLocs[i].locations;
 
-                for (let y = 0; y < loc1.length; y++) {
-                    loc2 = loc1[y]
-                    firedCell.push(loc2)
+                    for (let y = 0; y < loc1.length; y++) {
+                        loc2 = loc1[y]
+                        firedCell.push(loc2)
+                    }
+                }
+
+                console.log(id)
+
+                if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo")) {
+                    alert("You can't fire at the same location more than once")
+                } else {
+                    table.newSalvoLocs.push(id.replace("opp", ""))
+                    document.getElementById(id).classList.add("hitSalvo")
+                    table.firedSalvo++
                 }
             }
-
-            console.log(id)
-
-            if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo")) {
-                alert("You can't fire at the same location more than once")
-            } else {
-                table.newSalvoLocs.push(id.replace("opp", ""))
-                document.getElementById(id).classList.add("hitSalvo")
-                table.firedSalvo++
-            }
-
         }
     }
 });

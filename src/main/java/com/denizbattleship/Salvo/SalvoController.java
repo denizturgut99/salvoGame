@@ -300,6 +300,7 @@ public class SalvoController {
                     .stream()
                     .map(salvo -> salvoDTO(salvo))
                     .collect(toList()));
+            gameInfo.put("hits", getHitsDTO(gamePlayer));
         }
         return gameInfo;
     }
@@ -316,6 +317,29 @@ public class SalvoController {
         //this will get the called gameplayer (between ()) sorted by games, then filter them (while calling each one gamaplayer1)
         //for each gameplayer1, if the ID of the called gameplayer is not equal to the id of the gameplayer1
         //you return it, if you dont find it(EG: only one player) return null
+    }
+
+    private Map<String, Object> getHitsDTO(GamePlayer gamePlayer) {
+        Map<String, Object> makeHitsDTO = new HashMap<>();
+        GamePlayer opponentPlayer = opponent(gamePlayer);
+        Set<Ship> oppShipLocs = opponent(gamePlayer).getShip();
+
+        //locs is all of the opponent ship locations
+        List<String> locs = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
+
+        //if there is an opponent get the opponent salvo locations and the turn it was fired
+        if(opponentPlayer != null) {
+            for(Salvo salvo : gamePlayer.getSalvo()) {
+                for(String salvoLocs : salvo.getLocations()) {
+                    if(locs.contains(salvoLocs)) {
+                        //makeHitsDTO.put("salvoLocs", salvoLocs);
+                        //makeHitsDTO.put("turn", salvo.getTurn());
+                        makeHitsDTO.put(salvoLocs, salvo.getTurn());
+                    }
+                }
+            }
+        }
+        return makeHitsDTO;
     }
 
     private Map<String, Object> salvoDTO(Salvo salvo) {

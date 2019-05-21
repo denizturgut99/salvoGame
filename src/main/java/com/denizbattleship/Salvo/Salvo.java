@@ -35,7 +35,7 @@ public class Salvo {
 
     public Salvo(){}
 
-    public Salvo(int turn, List locations) {
+    public Salvo(int turn, List<String> locations) {
         this.turn = turn;
         this.locations = locations;
     }
@@ -56,7 +56,7 @@ public class Salvo {
         this.turn = turn;
     }
 
-    public List getLocations() {
+    public List<String> getLocations() {
         return this.locations;
     }
 

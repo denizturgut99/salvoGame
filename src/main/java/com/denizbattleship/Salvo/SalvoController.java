@@ -314,28 +314,31 @@ public class SalvoController {
                 .findFirst()
                 .orElse(null);
 
-        //this will get the called gameplayer (between ()) sorted by games, then filter them (while calling each one gamaplayer1)
+        //this will get the called gameplayer (between ()) sorted by games, then filter them (while calling each one gameplayer1)
         //for each gameplayer1, if the ID of the called gameplayer is not equal to the id of the gameplayer1
         //you return it, if you dont find it(EG: only one player) return null
     }
 
     private Map<String, Object> getHitsDTO(GamePlayer gamePlayer) {
         Map<String, Object> makeHitsDTO = new HashMap<>();
-        GamePlayer opponentPlayer = opponent(gamePlayer);
+        GamePlayer currentGP = gamePlayerRepository.getOne(gamePlayer.getId());
+        Set<Salvo> mySalvo = currentGP.getSalvo();
         Set<Ship> oppShipLocs = opponent(gamePlayer).getShip();
+        Ship oppShipType = shipRepository.getOne(opponent(gamePlayer).getId());
+        String oppShip = oppShipType.getType();
 
-        //locs is all of the opponent ship locations
-        List<String> locs = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
+        List<String> getOppShips = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
 
-        //if there is an opponent get the opponent salvo locations and the turn it was fired
-        if(opponentPlayer != null) {
-            for(Salvo salvo : gamePlayer.getSalvo()) {
-                for(String salvoLocs : salvo.getLocations()) {
-                    if(locs.contains(salvoLocs)) {
-                        //makeHitsDTO.put("salvoLocs", salvoLocs);
-                        //makeHitsDTO.put("turn", salvo.getTurn());
-                        makeHitsDTO.put(salvoLocs, salvo.getTurn());
-                    }
+        //locs is all salvos fired by player 1
+        List<String> getMySalvoes = mySalvo.stream()
+                .flatMap(salvo -> salvo.getLocations().stream())
+                .distinct()
+                .collect(toList());
+
+        for(int i = 0; i < getMySalvoes.size(); i++) {
+            for(int y = 0; y < getOppShips.size(); y++) {
+                if(getMySalvoes.get(i) == getOppShips.get(y)) {
+                    makeHitsDTO.put(getMySalvoes.get(i), oppShip);
                 }
             }
         }

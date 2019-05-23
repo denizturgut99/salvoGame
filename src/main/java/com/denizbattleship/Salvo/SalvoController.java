@@ -326,15 +326,6 @@ public class SalvoController {
         Set<Salvo> mySalvo = currentGP.getSalvo();
         Set<Ship> oppShipLocs = opponent(salvo.getGamePlayer()).getShip();
         Ship oppShips = shipRepository.getOne(opponent(salvo.getGamePlayer()).getId());
-        String oppShipType = oppShips.getType();
-
-        List<String> getOppShips = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList()); //all of the opponent ship locations
-        List<String> getOppTypes = oppShipLocs.stream().map(ship -> ship.getType()).collect(toList()); // all of the opponent ship types
-
-        
-        //locs is all salvos fired by player 1
-
-
 
         for (Ship ship: oppShipLocs) {
             for (String loc : ship.getLocations()) {
@@ -343,8 +334,15 @@ public class SalvoController {
                 }
             }
         }
-
         return makeHitsDTO;
+    }
+
+    private Map<String, Object> sunkShip(GamePlayer gamePlayer) {
+        Map<String, Object> isSunk = new HashMap<>();
+
+
+
+        return isSunk;
     }
 
     private Map<String, Object> salvoDTO(Salvo salvo) {

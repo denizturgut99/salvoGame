@@ -350,9 +350,23 @@ let table = new Vue({
             //remove the ships here
             let newIDs = []
 
-            for (let i = 0; i < this.shipLength; i++) {
-                let newID = letter + (Number(number) + i);
-                newIDs.push(newID)
+            if (table.isVertical == false) {
+                for (let i = 0; i < this.shipLength; i++) {
+                    let newID = letter + (Number(number) + i)
+                    newAllIDs.push(newID)
+                }
+            } else {
+                for (let i = 0; i < this.shipLength; i++) {
+                    const letters = "ABCDEFGHIJ";
+                    const newLetters = letters.split("");
+
+                    for (let y = 0; y < newLetters.length; y++) {
+                        if (e.target.id[0] == newLetters[y]) {
+                            let newID = newLetters[y + i] + (Number(number));
+                            newAllIDs.push(newID);
+                        }
+                    }
+                }
             }
 
             if (table.fullCell == false) {

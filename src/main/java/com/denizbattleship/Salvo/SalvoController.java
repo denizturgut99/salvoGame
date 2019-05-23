@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import java.util.List;
@@ -300,7 +302,6 @@ public class SalvoController {
                     .stream()
                     .map(salvo -> salvoDTO(salvo))
                     .collect(toList()));
-            gameInfo.put("hits", getHitsDTO(gamePlayer));
         }
         return gameInfo;
     }
@@ -319,29 +320,30 @@ public class SalvoController {
         //you return it, if you dont find it(EG: only one player) return null
     }
 
-    private Map<String, Object> getHitsDTO(GamePlayer gamePlayer) {
+    private Map<String, Object> getHitsDTO(Salvo salvo) {
         Map<String, Object> makeHitsDTO = new HashMap<>();
-        GamePlayer currentGP = gamePlayerRepository.getOne(gamePlayer.getId());
+        GamePlayer currentGP = gamePlayerRepository.getOne(salvo.getGamePlayer().getId());
         Set<Salvo> mySalvo = currentGP.getSalvo();
-        Set<Ship> oppShipLocs = opponent(gamePlayer).getShip();
-        Ship oppShipType = shipRepository.getOne(opponent(gamePlayer).getId());
-        String oppShip = oppShipType.getType();
+        Set<Ship> oppShipLocs = opponent(salvo.getGamePlayer()).getShip();
+        Ship oppShips = shipRepository.getOne(opponent(salvo.getGamePlayer()).getId());
+        String oppShipType = oppShips.getType();
 
-        List<String> getOppShips = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
+        List<String> getOppShips = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList()); //all of the opponent ship locations
+        List<String> getOppTypes = oppShipLocs.stream().map(ship -> ship.getType()).collect(toList()); // all of the opponent ship types
 
+        
         //locs is all salvos fired by player 1
-        List<String> getMySalvoes = mySalvo.stream()
-                .flatMap(salvo -> salvo.getLocations().stream())
-                .distinct()
-                .collect(toList());
 
-        for(int i = 0; i < getMySalvoes.size(); i++) {
-            for(int y = 0; y < getOppShips.size(); y++) {
-                if(getMySalvoes.get(i) == getOppShips.get(y)) {
-                    makeHitsDTO.put(getMySalvoes.get(i), oppShip);
+
+
+        for (Ship ship: oppShipLocs) {
+            for (String loc : ship.getLocations()) {
+                if(salvo.getLocations().contains(loc)) {
+                       makeHitsDTO.put(loc, ship.getType());
                 }
             }
         }
+
         return makeHitsDTO;
     }
 
@@ -349,6 +351,7 @@ public class SalvoController {
         Map<String, Object> makeSalvoDTO = new HashMap<>();
         makeSalvoDTO.put("turn", salvo.getTurn());
         makeSalvoDTO.put("locations", salvo.getLocations());
+        makeSalvoDTO.put("hits", getHitsDTO(salvo));
 
         return makeSalvoDTO;
     }

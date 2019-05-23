@@ -62,7 +62,7 @@ public class Ship {
         this.locations = loc;
    }
 
-    public List getLocations() {
+    public List<String> getLocations() {
         return locations;
     }
 }

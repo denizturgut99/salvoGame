@@ -474,11 +474,16 @@ let table = new Vue({
 
             for (let i = 0; i < salvoes.length; i++) {
                 let locs = salvoes[i].locations;
-                let turns = salvoes[i].turn;
+                let hit = salvoes[i].hits;
 
+                let obj = Object.keys(hit); //gets the keys of variable hit if it was Object.values it would get the turns
+                console.log(obj)
+                
                 for (let j = 0; j < locs.length; j++) {
-                    document.getElementById(locs[j] + "opp").classList.add("hitSalvo")
-                    document.getElementById(locs[j] + "opp").innerHTML = "S" + " " + turns;
+                    for(let y = 0; y < obj.length; y++) {
+                            document.getElementById(obj[y] + "opp").classList.add("hitSalvo")
+                            document.getElementById(locs[j] + "opp").classList.add("missSalvo")
+                    }
                 }
             }
         },
@@ -499,7 +504,6 @@ let table = new Vue({
             if (salvoes != undefined) {
                 for (let i = 0; i < salvoes.length; i++) {
                     let oppSalvo = salvoes[i].locations;
-                    let oppTurn = salvoes[i].turn;
 
                     for (let y = 0; y < oppSalvo.length; y++) {
                         if (shipLoc.includes(oppSalvo[y])) {
@@ -758,7 +762,7 @@ let table = new Vue({
                     alert("You can't fire at the same location more than once")
                 } else {
                     table.newSalvoLocs.push(id.replace("opp", ""))
-                    document.getElementById(id).classList.add("hitSalvo")
+                    document.getElementById(id).classList.add("chooseSalvoLoc")
                     table.firedSalvo++
                 }
             }

@@ -61,7 +61,12 @@ h1 {
  }
 
  .hitSalvo {
-     background-color: red !important;
+     background-image: url("./fireEightBit.gif") !important;
+     background-size: cover;
+ }
+
+ .chooseSalvoLoc {
+     background-color: green;
  }
 
  .missSalvo {

@@ -334,7 +334,6 @@ public class SalvoController {
         }
         */
 
-
         for (Salvo salvoe: salvo.getGamePlayer().getSalvo()) {
             for(String locs : salvoe.getLocations()) {
                 if(getOppShips.contains(locs)) {

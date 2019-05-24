@@ -322,15 +322,23 @@ public class SalvoController {
 
     private Map<String, Object> getHitsDTO(Salvo salvo) {
         Map<String, Object> makeHitsDTO = new HashMap<>();
-        GamePlayer currentGP = gamePlayerRepository.getOne(salvo.getGamePlayer().getId());
-        Set<Salvo> mySalvo = currentGP.getSalvo();
         Set<Ship> oppShipLocs = opponent(salvo.getGamePlayer()).getShip();
-        Ship oppShips = shipRepository.getOne(opponent(salvo.getGamePlayer()).getId());
-
+        List<String> getOppShips = (List<String>) oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
+        /*
         for (Ship ship: oppShipLocs) {
             for (String loc : ship.getLocations()) {
                 if(salvo.getLocations().contains(loc)) {
-                       makeHitsDTO.put(loc, ship.getType());
+                    makeHitsDTO.put(loc, ship.getType());
+                }
+            }
+        }
+        */
+
+
+        for (Salvo salvoe: salvo.getGamePlayer().getSalvo()) {
+            for(String locs : salvoe.getLocations()) {
+                if(getOppShips.contains(locs)) {
+                    makeHitsDTO.put(locs, salvoe.getTurn());
                 }
             }
         }
@@ -340,8 +348,66 @@ public class SalvoController {
     private Map<String, Object> sunkShip(GamePlayer gamePlayer) {
         Map<String, Object> isSunk = new HashMap<>();
 
+        int battleship = 4;
+        int patrol = 2;
+        int carrier = 5;
+        int submarine = 3;
+        int destroyer = 3;
 
+        List<String> mySalvoes = gamePlayer
+                .getSalvo()
+                .stream()
+                .flatMap(salvo -> salvo.getLocations().stream())
+                .collect(toList());
 
+        for(Ship ship : opponent(gamePlayer).getShip()) {
+            for(String locs : ship.getLocations()) {
+                if(mySalvoes.contains(locs)) {
+                    switch (ship.getType()) {
+                        case "Battleship":
+                            battleship--;
+                            if(battleship == 0) {
+                                isSunk.put(ship.getType(), true);
+                            } else {
+                                isSunk.put(ship.getType(), false);
+                            }
+                            break;
+                        case "PatrolBoat":
+                            patrol--;
+                            if(patrol == 0) {
+                                isSunk.put(ship.getType(), true);
+                            } else {
+                                isSunk.put(ship.getType(), false);
+                            }
+                            break;
+                        case "Carrier":
+                            carrier--;
+                            if(carrier == 0) {
+                                isSunk.put(ship.getType(), true);
+                            } else {
+                                isSunk.put(ship.getType(), false);
+                            }
+                            break;
+                        case "Submarine":
+                            submarine--;
+                            if(submarine == 0) {
+                                isSunk.put(ship.getType(), true);
+                            } else {
+                                isSunk.put(ship.getType(), false);
+                            }
+                            break;
+                        case "Destroyer":
+                            destroyer--;
+                            if(destroyer == 0) {
+                                isSunk.put(ship.getType(), true);
+                            } else {
+                                isSunk.put(ship.getType(), false);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
         return isSunk;
     }
 
@@ -350,6 +416,7 @@ public class SalvoController {
         makeSalvoDTO.put("turn", salvo.getTurn());
         makeSalvoDTO.put("locations", salvo.getLocations());
         makeSalvoDTO.put("hits", getHitsDTO(salvo));
+        makeSalvoDTO.put("isSunk", sunkShip(salvo.getGamePlayer()));
 
         return makeSalvoDTO;
     }

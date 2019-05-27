@@ -28,6 +28,8 @@ let table = new Vue({
         shipCurrentLoc: [],
         newPositions: [],
         fullCell: false,
+        damagedShipType: [],
+        damagedShipStatus: [],
         gameState: "placingShips",
         shipPositions: [{
                 type: "Carrier",
@@ -88,6 +90,7 @@ let table = new Vue({
                     table.showShips();
                     table.showSalvoes();
                     table.showOpponentSalvoes();
+                    table.showDamagedShips();
                 })
                 .catch(error => console.log(error));
         },
@@ -483,8 +486,21 @@ let table = new Vue({
                     for(let y = 0; y < obj.length; y++) {
                             document.getElementById(obj[y] + "opp").classList.add("hitSalvo")
                             document.getElementById(locs[j] + "opp").classList.add("missSalvo")
+                            document.getElementById(obj[y] + "opp").classList.remove("missSalvo")
                     }
                 }
+            }
+        },
+        showDamagedShips() {
+            let hits = table.oppSalvoLocs;
+
+            for(let i = 0; i < hits.length; i++) {
+                let status = Object.values(hits[i].isSunk);
+                let types = Object.keys(hits[i].isSunk);
+                table.damagedShipType.push(types)
+                table.damagedShipStatus.push(status)
+                console.log("THIS IS STATUS", status);
+                console.log("THIS IS TYPES", types);
             }
         },
         showOpponentSalvoes() {
@@ -551,10 +567,8 @@ let table = new Vue({
                     }
                 }
             }
-
             myTable.appendChild(table)
             document.getElementById("0").removeAttribute("id")
-
         },
         salvoTable() {
             const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];

@@ -56,7 +56,26 @@
                         Ships</button>
                 </div>
                 <div class="indicator" v-if="firedSalvo == 5"> <button id="fireSalvoesButton" type="button"
-                        class="nes-btn is-success" v-on:click="sendSalvo()">Fire Salvoes</button> </div>
+                        class="nes-btn is-success" v-on:click="sendSalvo()">Fire Salvoes</button>
+                </div>
+
+                <div class="indicator">
+                    <p style="font-size: 15px; margin-top:100px;">Ship Status</p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <p class="container" style="font-size: 10px;" v-for="type in damagedShipType[0]">
+                                    {{type}}  
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p class="container" style="font-size: 10px;" v-for="status in damagedShipStatus[0]">
+                                    {{status}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-sm">
                 <h2>Salvoes</h2>

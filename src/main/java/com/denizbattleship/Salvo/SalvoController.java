@@ -374,7 +374,7 @@ public class SalvoController {
                             } else if(battleship < 4) {
                                 isSunk.put(ship.getType(), battleship + " / " + 4);
                             } else {
-                                isSunk.put(ship.getType(), "Fully Functional");
+                                isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "PatrolBoat":
@@ -384,7 +384,7 @@ public class SalvoController {
                             } else if(patrol < 2) {
                                 isSunk.put(ship.getType(), patrol + " / " + 2);
                             } else {
-                                isSunk.put(ship.getType(), "Alive");
+                                isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Carrier":
@@ -394,7 +394,7 @@ public class SalvoController {
                             } else if(carrier < 5) {
                                 isSunk.put(ship.getType(), carrier + " / " + 5);
                             } else {
-                                isSunk.put(ship.getType(), "Alive");
+                                isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Submarine":
@@ -404,7 +404,7 @@ public class SalvoController {
                             } else if(submarine < 3) {
                                 isSunk.put(ship.getType(), submarine + " / " + 3);
                             } else {
-                                isSunk.put(ship.getType(), "Alive");
+                                isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Destroyer":
@@ -414,7 +414,7 @@ public class SalvoController {
                             } else if(destroyer < 3) {
                                 isSunk.put(ship.getType(), destroyer + " / " + 3);
                             } else {
-                                isSunk.put(ship.getType(), "Alive");
+                                isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                     }

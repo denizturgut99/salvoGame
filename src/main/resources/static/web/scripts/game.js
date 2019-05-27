@@ -81,7 +81,6 @@ let table = new Vue({
                         table.shipLocs = gameJson.game.ships
                         table.gameState = "playing"
                     }
-
                     table.salvoLocs = gameJson.game.MySalvoes;
                     table.oppSalvoLocs = gameJson.game.OpponentSalvoes;
                     table.userName = gameJson.game.gamePlayer;
@@ -170,15 +169,12 @@ let table = new Vue({
                     }
                 }
             }
-
             table.addRotateShip();
         },
         rotateShip(e) {
-
             let currentID = e.target.id; //gets the dom element
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
-
             let boatLoc = []; //selected ship locs
             let targeted = document.getElementById(currentID).getAttribute("data-shipType") //type of ship, e.g. 'BattleShip'
             let getShipType = document.getElementsByClassName(targeted); //gets all of the ship cells according the ship type
@@ -224,7 +220,6 @@ let table = new Vue({
             if (isVerticalNow == true) {
                 //if ship is vertical, change it to horizontal
                 isVerticalNow = false;
-
             } else {
                 //if ship is horizontal, change it to vertical
                 isVerticalNow = true;
@@ -254,7 +249,6 @@ let table = new Vue({
                 this.makeRotatedShip(newIDs, targeted, newIDsLength)
             }
         },
-
         addRotateShip() {
             if (table.gameState == "placingShips") {
                 let rotateButton = document.getElementsByClassName("rotateShip")
@@ -311,7 +305,6 @@ let table = new Vue({
             //add and remove attributes/classes in order to make the ship disappear until placed again
             this.removeOldShip(table.allIDs)
         },
-
         dragOver(e) {
             //dragOver is necessary otherwise the ship goes back to its original place
             e.preventDefault();
@@ -345,7 +338,6 @@ let table = new Vue({
                 }
             }
         },
-
         dragLeave(e) {
             let letter = e.target.id.substr(0, 1);
             let number = e.target.id.substr(1, 2);
@@ -379,16 +371,13 @@ let table = new Vue({
                     }
                 }
             }
-
         },
 
         dragEnter(e) {
             e.preventDefault();
-
             let shipCellID = e.target.id;
             let letter = shipCellID.substr(0, 1);
             let number = shipCellID.substr(1, 2);
-
             let newIDs = []
 
             if (table.isVertical == false) {
@@ -434,9 +423,7 @@ let table = new Vue({
                 table.occurence++;
                 table.alertMsg = true;
             }
-
         },
-
         dragDrop(e) {
             let shipCellID = e.target.id;
             let letter = shipCellID.substr(0, 1);
@@ -471,7 +458,6 @@ let table = new Vue({
                 this.makeShip(newAllIDs)
             }
         },
-
         showSalvoes() {
             let salvoes = table.salvoLocs;
 
@@ -480,7 +466,6 @@ let table = new Vue({
                 let hit = salvoes[i].hits;
 
                 let obj = Object.keys(hit); //gets the keys of variable hit if it was Object.values it would get the turns
-                console.log(obj)
                 
                 for (let j = 0; j < locs.length; j++) {
                     for(let y = 0; y < obj.length; y++) {
@@ -499,8 +484,6 @@ let table = new Vue({
                 let types = Object.keys(hits[i].isSunk);
                 table.damagedShipType.push(types)
                 table.damagedShipStatus.push(status)
-                console.log("THIS IS STATUS", status);
-                console.log("THIS IS TYPES", types);
             }
         },
         showOpponentSalvoes() {
@@ -648,7 +631,6 @@ let table = new Vue({
             table.allIDs = [];
         },
         makeShip(shipID) {
-
             let types = table.shipLocs;
 
             for (let j = 0; j < shipID.length; j++) {
@@ -716,14 +698,11 @@ let table = new Vue({
                 let url = "/api/games/players/" + gamePlayerID + "/salvos";
                 let locs = table.newSalvoLocs
                 let newLocs = []
-                console.log(locs)
 
                 for (let i = 0; i < table.newSalvoLocs.length; i++) {
                     console.log(table.newSalvoLocs[i])
                     newLocs.push(table.newSalvoLocs[i])
                 }
-
-                console.log(newLocs)
 
                 if (table.firedSalvo == 5 && table.matchPlayers.length == 2) {
                     fetch(url, {
@@ -745,7 +724,6 @@ let table = new Vue({
                                 window.location.reload(true)
                             }
                             table.firedSalvo = 0
-                            // table.salvoLocs = []
                         })
                         .catch(error => console.log(error))
                 } else {
@@ -769,8 +747,6 @@ let table = new Vue({
                         firedCell.push(loc2)
                     }
                 }
-
-                console.log(id)
 
                 if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo")) {
                     alert("You can't fire at the same location more than once")

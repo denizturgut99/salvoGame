@@ -45,10 +45,23 @@
                 <table id="table1" class="gameTable"></table>
             </div>
             <div class="indicator">
-                <p style="font-size: 15px;">Your Ships</p>
-
-                <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
-                    {{ship.locations}} </div>
+                <p style="font-size: 15px; margin-top:50px;">Your Ships Status</p>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <p class="container" style="font-size: 10px;" v-for="type in damagedShipType[0]">
+                                {{type}}  
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="container" style="font-size: 10px;" v-for="status in damagedShipStatus[0]">
+                                {{status}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
+                    {{ship.locations}} </div> -->
 
                 <div class="indicator" v-if="shipLocs.length == 5">
                     <button id="placeShipButton" type="button" class="nes-btn is-success"
@@ -60,16 +73,16 @@
                 </div>
 
                 <div class="indicator">
-                    <p style="font-size: 15px; margin-top:100px;">Ship Status</p>
+                    <p style="font-size: 15px; margin-top:50px;">Opponent Ship Status</p>
                     <div class="container">
                         <div class="row">
                             <div class="col">
-                                <p class="container" style="font-size: 10px;" v-for="type in damagedShipType[0]">
+                                <p class="container" style="font-size: 10px;" v-for="type in oppDamagedType[0]">
                                     {{type}}  
                                 </p>
                             </div>
                             <div class="col">
-                                <p class="container" style="font-size: 10px;" v-for="status in damagedShipStatus[0]">
+                                <p class="container" style="font-size: 10px;" v-for="status in oppDamagedStatus[0]">
                                     {{status}}
                                 </p>
                             </div>

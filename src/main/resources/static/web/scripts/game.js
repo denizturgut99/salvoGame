@@ -30,6 +30,8 @@ let table = new Vue({
         fullCell: false,
         damagedShipType: [],
         damagedShipStatus: [],
+        oppDamagedType: [],
+        oppDamagedStatus: [],
         gameState: "placingShips",
         shipPositions: [{
                 type: "Carrier",
@@ -453,7 +455,6 @@ let table = new Vue({
             if (table.fullCell == true || table.outOfGrid == true) {
                 //table.allIDs has the initial starting locations
                 this.makeShip(table.allIDs)
-
             } else if (table.fullCell == false || table.outOfGrid == false) {
                 this.makeShip(newAllIDs)
             }
@@ -464,13 +465,13 @@ let table = new Vue({
             for (let i = 0; i < salvoes.length; i++) {
                 let locs = salvoes[i].locations;
                 let hit = salvoes[i].hits;
-
+                console.log(locs)
                 let obj = Object.keys(hit); //gets the keys of variable hit if it was Object.values it would get the turns
                 
                 for (let j = 0; j < locs.length; j++) {
+                    document.getElementById(locs[j] + "opp").classList.add("missSalvo")
                     for(let y = 0; y < obj.length; y++) {
                             document.getElementById(obj[y] + "opp").classList.add("hitSalvo")
-                            document.getElementById(locs[j] + "opp").classList.add("missSalvo")
                             document.getElementById(obj[y] + "opp").classList.remove("missSalvo")
                     }
                 }
@@ -478,12 +479,17 @@ let table = new Vue({
         },
         showDamagedShips() {
             let hits = table.oppSalvoLocs;
-
             for(let i = 0; i < hits.length; i++) {
                 let status = Object.values(hits[i].isSunk);
                 let types = Object.keys(hits[i].isSunk);
                 table.damagedShipType.push(types)
                 table.damagedShipStatus.push(status)
+            }
+            for(let y = 0; y < hits.length; y++) {
+                let status = Object.values(hits[y].oppSunk);
+                let types = Object.keys(hits[y].oppSunk);
+                table.oppDamagedType.push(types)
+                table.oppDamagedStatus.push(status)
             }
         },
         showOpponentSalvoes() {
@@ -506,10 +512,8 @@ let table = new Vue({
 
                     for (let y = 0; y < oppSalvo.length; y++) {
                         if (shipLoc.includes(oppSalvo[y])) {
-                            // document.getElementById(oppSalvo[y]).innerHTML = "H" + " " + oppTurn;
                             document.getElementById(oppSalvo[y]).classList.add("hitSalvo")
                         } else {
-                            // document.getElementById(oppSalvo[y]).innerHTML = "M" + " " + oppTurn;
                             document.getElementById(oppSalvo[y]).classList.add("missSalvo")
                         }
                     }
@@ -613,7 +617,6 @@ let table = new Vue({
                 document.getElementById(shipIDs[0]).classList.add("rotateShip");
                 document.getElementById(shipIDs[0]).addEventListener("click", this.rotateShip);
                 document.getElementById(shipIDs[j]).classList.remove("empty")
-                // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                 document.getElementById(shipIDs[0]).setAttribute("draggable", "true");
                 document.getElementById(shipIDs[j]).setAttribute('data-shipType', type);
                 document.getElementById(shipIDs[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
@@ -639,7 +642,6 @@ let table = new Vue({
                 document.getElementById(shipID[j]).classList.remove("empty")
                 document.getElementById(shipID[0]).classList.add("rotateShip");
                 document.getElementById(shipID[0]).addEventListener("click", this.rotateShip);
-                // document.getElementById(newAllIDs[i]).classList.remove("notAllowed")
                 document.getElementById(shipID[0]).setAttribute("draggable", "true");
                 document.getElementById(shipID[j]).setAttribute('data-shipType', table.shipType);
                 document.getElementById(shipID[j]).setAttribute('data-shipLocs', table.shipCurrentLoc);
@@ -688,6 +690,7 @@ let table = new Vue({
                         alert(gameJson.error)
                     } else {
                         location.reload(true)
+                        // this.classList.add("hide");
                     }
                 })
                 .catch(error => console.log(error))
@@ -699,9 +702,9 @@ let table = new Vue({
                 let locs = table.newSalvoLocs
                 let newLocs = []
 
-                for (let i = 0; i < table.newSalvoLocs.length; i++) {
-                    console.log(table.newSalvoLocs[i])
-                    newLocs.push(table.newSalvoLocs[i])
+                for (let i = 0; i < locs.length; i++) {
+                    console.log(locs[i])
+                    newLocs.push(locs[i])
                 }
 
                 if (table.firedSalvo == 5 && table.matchPlayers.length == 2) {
@@ -748,7 +751,7 @@ let table = new Vue({
                     }
                 }
 
-                if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo")) {
+                if (table.newSalvoLocs.includes(id.replace("opp", "")) || document.getElementById(id).classList.contains("hitSalvo") || document.getElementById(id).classList.contains("missSalvo")) {
                     alert("You can't fire at the same location more than once")
                 } else {
                     table.newSalvoLocs.push(id.replace("opp", ""))

@@ -297,7 +297,7 @@ public class SalvoController {
                 .stream()
                 .map(salvo -> salvoDTO(salvo))
                 .collect(toList()));
-        if(gamePlayer.getGame().getGamePlayers().size() > 1) {
+        if(opponent(gamePlayer) != null) {
             gameInfo.put("OpponentSalvoes", opponent(gamePlayer).getSalvo()
                     .stream()
                     .map(salvo -> salvoDTO(salvo))
@@ -324,15 +324,6 @@ public class SalvoController {
         Map<String, Object> makeHitsDTO = new HashMap<>();
         Set<Ship> oppShipLocs = opponent(salvo.getGamePlayer()).getShip();
         List<String> getOppShips = oppShipLocs.stream().flatMap(ship -> ship.getLocations().stream()).collect(toList());
-        /*
-        for (Ship ship: oppShipLocs) {
-            for (String loc : ship.getLocations()) {
-                if(salvo.getLocations().contains(loc)) {
-                    makeHitsDTO.put(loc, ship.getType());
-                }
-            }
-        }
-        */
 
         for (Salvo salvoe: salvo.getGamePlayer().getSalvo()) {
             for(String locs : salvoe.getLocations()) {
@@ -365,60 +356,151 @@ public class SalvoController {
         //and if the length reaches 0 then ship is sunk returns as true
         for(Ship ship : opponent(gamePlayer).getShip()) {
             for(String locs : ship.getLocations()) {
-                if(mySalvoes.contains(locs)) {
+                //if(mySalvoes.contains(locs)) {
                     switch (ship.getType()) {
                         case "Battleship":
-                            battleship--;
-                            if(battleship == 0) {
-                                isSunk.put(ship.getType(), "Sunk");
-                            } else if(battleship < 4) {
-                                isSunk.put(ship.getType(), battleship + " / " + 4);
+                            if(mySalvoes.contains(locs)) {
+                                battleship--;
+                                if(battleship == 0) {
+                                    isSunk.put(ship.getType(), "Sunk");
+                                } else if(battleship < 4) {
+                                    isSunk.put(ship.getType(), battleship + " / " + 4);
+                                }
                             } else {
                                 isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "PatrolBoat":
-                            patrol--;
-                            if(patrol == 0) {
-                                isSunk.put(ship.getType(), "Sunk");
-                            } else if(patrol < 2) {
-                                isSunk.put(ship.getType(), patrol + " / " + 2);
+                            if(mySalvoes.contains(locs)) {
+                                patrol--;
+                                if(patrol == 0) {
+                                    isSunk.put(ship.getType(), "Sunk");
+                                } else if(patrol < 2) {
+                                    isSunk.put(ship.getType(), patrol + " / " + 2);
+                                }
                             } else {
                                 isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Carrier":
-                            carrier--;
-                            if(carrier == 0) {
-                                isSunk.put(ship.getType(), "Sunk");
-                            } else if(carrier < 5) {
-                                isSunk.put(ship.getType(), carrier + " / " + 5);
+                            if(mySalvoes.contains(locs)) {
+                                carrier--;
+                                if(carrier == 0) {
+                                    isSunk.put(ship.getType(), "Sunk");
+                                } else if(carrier < 5) {
+                                    isSunk.put(ship.getType(), carrier + " / " + 5);
+                                }
                             } else {
-                                isSunk.put(ship.getType(), "Functional");
+                                    isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Submarine":
-                            submarine--;
-                            if(submarine == 0) {
-                                isSunk.put(ship.getType(), "Sunk");
-                            } else if(submarine < 3) {
-                                isSunk.put(ship.getType(), submarine + " / " + 3);
+                            if(mySalvoes.contains(locs)) {
+                                submarine--;
+                                if(submarine == 0) {
+                                    isSunk.put(ship.getType(), "Sunk");
+                                } else if(submarine < 3) {
+                                    isSunk.put(ship.getType(), submarine + " / " + 3);
+                                }
                             } else {
                                 isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                         case "Destroyer":
-                            destroyer--;
-                            if(destroyer == 0) {
-                                isSunk.put(ship.getType(), "Sunk");
-                            } else if(destroyer < 3) {
-                                isSunk.put(ship.getType(), destroyer + " / " + 3);
+                            if(mySalvoes.contains(locs)) {
+                                destroyer--;
+                                if(destroyer == 0) {
+                                    isSunk.put(ship.getType(), "Sunk");
+                                } else if(destroyer < 3) {
+                                    isSunk.put(ship.getType(), destroyer + " / " + 3);
+                                }
                             } else {
                                 isSunk.put(ship.getType(), "Functional");
                             }
                             break;
                     }
+                //}
+            }
+        }
+        return isSunk;
+    }
+
+    private Map<String, Object> oppSunkShip(GamePlayer gamePlayer) {
+        Map<String, Object> isSunk = new HashMap<>();
+        GamePlayer oppPlayer = opponent(gamePlayer);
+
+        //length of each ship (how many cells they cover)
+        int battleship = 4;
+        int patrol = 2;
+        int carrier = 5;
+        int submarine = 3;
+        int destroyer = 3;
+
+        //get player salvos in order to identify the ship type that has been hit
+        List<String> oppSalvoes = oppPlayer
+                .getSalvo()
+                .stream()
+                .flatMap(salvo -> salvo.getLocations().stream())
+                .collect(toList());
+
+        //get opponent's ships and check if they match with player salvos in that case the ship loses a "length"
+        //and if the length reaches 0 then ship is sunk returns as true
+        for(Ship ship : gamePlayer.getShip()) {
+            for(String locs : ship.getLocations()) {
+                //if(mySalvoes.contains(locs)) {
+                switch (ship.getType()) {
+                    case "Battleship":
+                        if(oppSalvoes.contains(locs)) {
+                            battleship--;
+                            if(battleship == 0) {
+                                isSunk.put(ship.getType(), "Sunk");
+                            }
+                        } else {
+                            isSunk.put(ship.getType(), "Functional");
+                        }
+                        break;
+                    case "PatrolBoat":
+                        if(oppSalvoes.contains(locs)) {
+                            patrol--;
+                            if(patrol == 0) {
+                                isSunk.put(ship.getType(), "Sunk");
+                            }
+                        } else {
+                            isSunk.put(ship.getType(), "Functional");
+                        }
+                        break;
+                    case "Carrier":
+                        if(oppSalvoes.contains(locs)) {
+                            carrier--;
+                            if(carrier == 0) {
+                                isSunk.put(ship.getType(), "Sunk");
+                            }
+                        } else {
+                            isSunk.put(ship.getType(), "Functional");
+                        }
+                        break;
+                    case "Submarine":
+                        if(oppSalvoes.contains(locs)) {
+                            submarine--;
+                            if(submarine == 0) {
+                                isSunk.put(ship.getType(), "Sunk");
+                            }
+                        } else {
+                            isSunk.put(ship.getType(), "Functional");
+                        }
+                        break;
+                    case "Destroyer":
+                        if(oppSalvoes.contains(locs)) {
+                            destroyer--;
+                            if(destroyer == 0) {
+                                isSunk.put(ship.getType(), "Sunk");
+                            }
+                        } else {
+                            isSunk.put(ship.getType(), "Functional");
+                        }
+                        break;
                 }
+                //}
             }
         }
         return isSunk;
@@ -430,6 +512,7 @@ public class SalvoController {
         makeSalvoDTO.put("locations", salvo.getLocations());
         makeSalvoDTO.put("hits", getHitsDTO(salvo));
         makeSalvoDTO.put("isSunk", sunkShip(salvo.getGamePlayer()));
+        makeSalvoDTO.put("oppSunk", oppSunkShip(salvo.getGamePlayer()));
 
         return makeSalvoDTO;
     }

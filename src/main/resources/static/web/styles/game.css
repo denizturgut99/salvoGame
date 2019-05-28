@@ -72,3 +72,7 @@ h1 {
  .missSalvo {
      background-color: darkgreen !important;
  }
+
+ .hide {
+     display: none;
+ }

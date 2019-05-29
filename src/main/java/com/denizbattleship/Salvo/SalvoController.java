@@ -44,28 +44,28 @@ public class SalvoController {
 
 
     //public List<Object> all() {
-        //return gameRepository.findAll().stream().map(g -> autPlayer(g)).collect(toList());
+    //return gameRepository.findAll().stream().map(g -> autPlayer(g)).collect(toList());
     //}
 
     @RequestMapping(path="/api/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
-            if(authentication != null) {
-                //if there is a logged in player create a new game and save it into the game repo
-                Game game1 = new Game(LocalDateTime.now());
-                gameRepository.save(game1);
+        if(authentication != null) {
+            //if there is a logged in player create a new game and save it into the game repo
+            Game game1 = new Game(LocalDateTime.now());
+            gameRepository.save(game1);
 
-                //if there is a logged in player get the logged player info no need to save it to repo as this player already exists
-                Player player1 = getLoggedPlayer(authentication);
+            //if there is a logged in player get the logged player info no need to save it to repo as this player already exists
+            Player player1 = getLoggedPlayer(authentication);
 
-                //gamePlayer saves both game and player into the gamePlayer repo which includes important info for both games and players
-                GamePlayer gamePlayer = new GamePlayer(game1, player1);
-                gamePlayerRepository.save(gamePlayer);
+            //gamePlayer saves both game and player into the gamePlayer repo which includes important info for both games and players
+            GamePlayer gamePlayer = new GamePlayer(game1, player1);
+            gamePlayerRepository.save(gamePlayer);
 
-                return new ResponseEntity<>(checkInfo("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+            return new ResponseEntity<>(checkInfo("gpid", gamePlayer.getId()), HttpStatus.CREATED);
 
-            } else {
-                return new ResponseEntity<>(checkInfo("error", "Please Log-In to be able to create games."), HttpStatus.UNAUTHORIZED);
-            }
+        } else {
+            return new ResponseEntity<>(checkInfo("error", "Please Log-In to be able to create games."), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping(path="/api/games/players/{gamePlayerID}/ships", method = RequestMethod.POST)
@@ -155,11 +155,11 @@ public class SalvoController {
     public Map<String, Object> autPlayer(Authentication authentication) {
         Map<String, Object> dto = new HashMap<>();
         Set<Game> games = new LinkedHashSet<>(gameRepository.findAll());
-       if(authentication != null) {
-           dto.put("current", playerDTO(getLoggedPlayer(authentication)));
-       } else {
-           dto.put("current", "guest");
-       }
+        if(authentication != null) {
+            dto.put("current", playerDTO(getLoggedPlayer(authentication)));
+        } else {
+            dto.put("current", "guest");
+        }
         dto.put("games", games.stream().map(g -> gameDTO(g)).collect(toList()));
 
         return dto;
@@ -191,14 +191,14 @@ public class SalvoController {
         int oppTurn = oppSalvoes.getSalvo().size() + 1; //same thing but for the opponent
 
         if(gpTurn > oppTurn) {
-           return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
         }
 
         Salvo salvo = new Salvo(gpTurn, salvos);
 
-            gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
-            salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
-            System.out.println(salvo.getLocations());
+        gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
+        salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
+        System.out.println(salvo.getLocations());
 
 
         return new ResponseEntity<>(checkInfo("OK", "Salvo locations have been set!"), HttpStatus.CREATED);
@@ -266,7 +266,7 @@ public class SalvoController {
         GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerID);
 
         if(gamePlayer.getPlayer().getId() != getLoggedPlayer(authentication).getId()) {
-           return new ResponseEntity<>(checkInfo("error", "Stop cheating!"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(checkInfo("error", "Stop cheating!"), HttpStatus.UNAUTHORIZED);
         } else {
             return new ResponseEntity<>(gameViewId(gamePlayerID), HttpStatus.OK);
         }
@@ -310,8 +310,8 @@ public class SalvoController {
         return gamePlayer.getGame().getGamePlayers()
                 .stream()
                 .filter(gamePlayer1 -> !gamePlayer
-                .getId()
-                .equals(gamePlayer1.getId()))
+                        .getId()
+                        .equals(gamePlayer1.getId()))
                 .findFirst()
                 .orElse(null);
 
@@ -357,100 +357,9 @@ public class SalvoController {
         for(Ship ship : opponent(gamePlayer).getShip()) {
             for(String locs : ship.getLocations()) {
                 //if(mySalvoes.contains(locs)) {
-                    switch (ship.getType()) {
-                        case "Battleship":
-                            if(mySalvoes.contains(locs)) {
-                                battleship--;
-                                if(battleship == 0) {
-                                    isSunk.put(ship.getType(), "Sunk");
-                                } else if(battleship < 4) {
-                                    isSunk.put(ship.getType(), battleship + " / " + 4);
-                                }
-                            } else {
-                                isSunk.put(ship.getType(), "Functional");
-                            }
-                            break;
-                        case "PatrolBoat":
-                            if(mySalvoes.contains(locs)) {
-                                patrol--;
-                                if(patrol == 0) {
-                                    isSunk.put(ship.getType(), "Sunk");
-                                } else if(patrol < 2) {
-                                    isSunk.put(ship.getType(), patrol + " / " + 2);
-                                }
-                            } else {
-                                isSunk.put(ship.getType(), "Functional");
-                            }
-                            break;
-                        case "Carrier":
-                            if(mySalvoes.contains(locs)) {
-                                carrier--;
-                                if(carrier == 0) {
-                                    isSunk.put(ship.getType(), "Sunk");
-                                } else if(carrier < 5) {
-                                    isSunk.put(ship.getType(), carrier + " / " + 5);
-                                }
-                            } else {
-                                    isSunk.put(ship.getType(), "Functional");
-                            }
-                            break;
-                        case "Submarine":
-                            if(mySalvoes.contains(locs)) {
-                                submarine--;
-                                if(submarine == 0) {
-                                    isSunk.put(ship.getType(), "Sunk");
-                                } else if(submarine < 3) {
-                                    isSunk.put(ship.getType(), submarine + " / " + 3);
-                                }
-                            } else {
-                                isSunk.put(ship.getType(), "Functional");
-                            }
-                            break;
-                        case "Destroyer":
-                            if(mySalvoes.contains(locs)) {
-                                destroyer--;
-                                if(destroyer == 0) {
-                                    isSunk.put(ship.getType(), "Sunk");
-                                } else if(destroyer < 3) {
-                                    isSunk.put(ship.getType(), destroyer + " / " + 3);
-                                }
-                            } else {
-                                isSunk.put(ship.getType(), "Functional");
-                            }
-                            break;
-                    }
-                //}
-            }
-        }
-        return isSunk;
-    }
-
-    private Map<String, Object> oppSunkShip(GamePlayer gamePlayer) {
-        Map<String, Object> isSunk = new HashMap<>();
-        GamePlayer oppPlayer = opponent(gamePlayer);
-
-        //length of each ship (how many cells they cover)
-        int battleship = 4;
-        int patrol = 2;
-        int carrier = 5;
-        int submarine = 3;
-        int destroyer = 3;
-
-        //get player salvos in order to identify the ship type that has been hit
-        List<String> oppSalvoes = oppPlayer
-                .getSalvo()
-                .stream()
-                .flatMap(salvo -> salvo.getLocations().stream())
-                .collect(toList());
-
-        //get opponent's ships and check if they match with player salvos in that case the ship loses a "length"
-        //and if the length reaches 0 then ship is sunk returns as true
-        for(Ship ship : gamePlayer.getShip()) {
-            for(String locs : ship.getLocations()) {
-                //if(mySalvoes.contains(locs)) {
                 switch (ship.getType()) {
                     case "Battleship":
-                        if(oppSalvoes.contains(locs)) {
+                        if(mySalvoes.contains(locs)) {
                             battleship--;
                             if(battleship == 0) {
                                 isSunk.put(ship.getType(), "Sunk");
@@ -460,7 +369,7 @@ public class SalvoController {
                         }
                         break;
                     case "PatrolBoat":
-                        if(oppSalvoes.contains(locs)) {
+                        if(mySalvoes.contains(locs)) {
                             patrol--;
                             if(patrol == 0) {
                                 isSunk.put(ship.getType(), "Sunk");
@@ -470,7 +379,7 @@ public class SalvoController {
                         }
                         break;
                     case "Carrier":
-                        if(oppSalvoes.contains(locs)) {
+                        if(mySalvoes.contains(locs)) {
                             carrier--;
                             if(carrier == 0) {
                                 isSunk.put(ship.getType(), "Sunk");
@@ -480,7 +389,7 @@ public class SalvoController {
                         }
                         break;
                     case "Submarine":
-                        if(oppSalvoes.contains(locs)) {
+                        if(mySalvoes.contains(locs)) {
                             submarine--;
                             if(submarine == 0) {
                                 isSunk.put(ship.getType(), "Sunk");
@@ -490,7 +399,7 @@ public class SalvoController {
                         }
                         break;
                     case "Destroyer":
-                        if(oppSalvoes.contains(locs)) {
+                        if(mySalvoes.contains(locs)) {
                             destroyer--;
                             if(destroyer == 0) {
                                 isSunk.put(ship.getType(), "Sunk");
@@ -506,13 +415,91 @@ public class SalvoController {
         return isSunk;
     }
 
+    private Map<String, String> makeGameState(GamePlayer gamePlayer) {
+        Map<String, String> stateDTO = new HashMap<>();
+
+        if(opponent(gamePlayer) == null || gamePlayer.getGame().getGamePlayers().size() == 1) {
+            stateDTO.put("Status", "WAITING");
+            stateDTO.put("Info", "Waiting for an opponent");
+            return stateDTO;
+        }
+        if(gamePlayer.getShip().size() == 0 || gamePlayer.getShip().size() < 5) {
+            stateDTO.put("Status", "WAITING");
+            stateDTO.put("Info", "Waiting for user to place ships");
+            return stateDTO;
+        }
+
+        if(gamePlayer.getGame().getGamePlayers().size() == 2) {
+            GamePlayer opp = opponent(gamePlayer);
+
+            if(opp.getShip().size() == 0 || opp.getShip().size() < 5) {
+                stateDTO.put("Status", "WAITING");
+                stateDTO.put("Info", "Waiting for your opponent to place ships");
+                return stateDTO;
+            }
+            //check if both sides finished firing
+            if(opp.getSalvo().size() == gamePlayer.getSalvo().size()) {
+                Boolean playerAllShipsSunk = allShipsSunk(gamePlayer);
+                Boolean oppAllShipsSunk = allShipsSunk(opp);
+
+                //player's ships are sunk, opponent wins
+                if(playerAllShipsSunk == true && oppAllShipsSunk == false) {
+                    stateDTO.put("Status", "LOST");
+                    stateDTO.put("Info", "You lost the game");
+                    return stateDTO;
+                }
+
+                //opponent's ships are sunk, player wins
+                if(playerAllShipsSunk == false && oppAllShipsSunk == true) {
+                    stateDTO.put("Status", "WON");
+                    stateDTO.put("Info", "You won the game");
+                    return stateDTO;
+                }
+
+                //both side's ships are sunk, game is tied
+                if(playerAllShipsSunk == true && oppAllShipsSunk == true) {
+                    stateDTO.put("Status", "TIE");
+                    stateDTO.put("Info", "The game is tied");
+                    return stateDTO;
+                }
+
+                //game continues if both side's still have functional ships
+                if(playerAllShipsSunk == false && oppAllShipsSunk == false) {
+                    stateDTO.put("Status", "CONTINUE");
+                    stateDTO.put("Info", "Your opponent still has functional ships, continue firing salvos!");
+                }
+            }
+
+        }
+
+        return stateDTO;
+    }
+    //check if all ships are sunk
+    private Boolean allShipsSunk(GamePlayer gamePlayer) {
+        Set<Salvo> oppSalvos = new LinkedHashSet<>(opponent(gamePlayer).getSalvo());
+        List<String> allOppSalvoLocs = oppSalvos.stream().flatMap(salvo -> salvo.getLocations().stream()).collect(toList());
+
+        for(Ship ship : gamePlayer.getShip()) {
+            List<String> hits = new ArrayList<>(allOppSalvoLocs);
+            //if the salvos dont hit the ships they get removed from the hits list
+            hits.retainAll(ship.getLocations());
+
+            boolean sunk = hits.size() >= ship.getLocations().size();
+
+            if(!sunk) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private Map<String, Object> salvoDTO(Salvo salvo) {
         Map<String, Object> makeSalvoDTO = new HashMap<>();
         makeSalvoDTO.put("turn", salvo.getTurn());
         makeSalvoDTO.put("locations", salvo.getLocations());
         makeSalvoDTO.put("hits", getHitsDTO(salvo));
         makeSalvoDTO.put("isSunk", sunkShip(salvo.getGamePlayer()));
-        makeSalvoDTO.put("oppSunk", oppSunkShip(salvo.getGamePlayer()));
+        makeSalvoDTO.put("oppSunk", sunkShip(opponent(salvo.getGamePlayer())));
 
         return makeSalvoDTO;
     }

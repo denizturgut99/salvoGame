@@ -194,6 +194,15 @@ public class SalvoController {
             return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
         }
 
+        Map<String, String> stateOfGame = makeGameState(gamePlayer);
+        String statusOfGame = stateOfGame.get("Status");
+
+        //checking if the game is finished or its not user's turn yet
+        //this is like a pre check, this should be checked before salvo is sent to the backend in order to stop players from continuing a finished game.
+        if(!statusOfGame.equals("CONTINUE")) {
+            return new ResponseEntity<>(checkInfo("error", "It's either not your turn or the game has been finished"), HttpStatus.FORBIDDEN);
+        }
+
         Salvo salvo = new Salvo(gpTurn, salvos);
 
         gamePlayer.addSalvo(salvo); //each time a salvo is fired by a player, the salvoes get
@@ -467,11 +476,22 @@ public class SalvoController {
                 if(playerAllShipsSunk == false && oppAllShipsSunk == false) {
                     stateDTO.put("Status", "CONTINUE");
                     stateDTO.put("Info", "Your opponent still has functional ships, continue firing salvos!");
+                    return stateDTO;
                 }
             }
 
+            //check if either the player or the opponent is ahead in turns
+            if(gamePlayer.getSalvo().size() > opp.getSalvo().size()) {
+                stateDTO.put("Status", "WAITING");
+                stateDTO.put("Info", "Wait for your turn");
+                return stateDTO;
+            }
+            if(gamePlayer.getSalvo().size() < opp.getSalvo().size()) {
+                stateDTO.put("Status", "CONTINUE");
+                stateDTO.put("Info", "Your opponent is waiting for you to fire");
+                return stateDTO;
+            }
         }
-
         return stateDTO;
     }
     //check if all ships are sunk
@@ -480,11 +500,10 @@ public class SalvoController {
         List<String> allOppSalvoLocs = oppSalvos.stream().flatMap(salvo -> salvo.getLocations().stream()).collect(toList());
 
         for(Ship ship : gamePlayer.getShip()) {
-            List<String> hits = new ArrayList<>(allOppSalvoLocs);
-            //if the salvos dont hit the ships they get removed from the hits list
-            hits.retainAll(ship.getLocations());
+            List<String> hits = new ArrayList<>(allOppSalvoLocs); //all of the opponent salvo locs are pushed into a new array list
+            hits.retainAll(ship.getLocations()); //if the salvos dont hit the ships they get removed from the hits list
 
-            boolean sunk = hits.size() >= ship.getLocations().size();
+            boolean sunk = hits.size() >= ship.getLocations().size(); //if hit salvos are the same amount as the ship locs than this is returned as true
 
             if(!sunk) {
                 return false;

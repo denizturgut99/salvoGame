@@ -66,10 +66,10 @@ let table = new Vue({
             fetch(url, {
                     mode: "cors",
                 })
-                .then(function (response) {
+                .then((response) => {
                     return response.json()
                 })
-                .then(function (gameJson) {
+                .then((gameJson) => {
 
                     if (gameJson.hasOwnProperty('error')) {
                         alert(gameJson.error)
@@ -111,7 +111,7 @@ let table = new Vue({
                 let playerOne = table.userName[0].player.player
                 let playerTwo = "Awaiting for a player";
 
-                playersInGame.textContent = playerOne + "(YOU) vs " + playerTwo
+                playersInGame.textContent = playerOne + "(YOU) vs " + playerTwo;
             } else {
                 let playerOne = table.userName[0].player.player;
                 let playerTwo = table.userName[1].player.player;
@@ -660,7 +660,7 @@ let table = new Vue({
         },
         getUrlVars() {
             let vars = {};
-            let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+            let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
                 vars = value; //gets the ID as a value instead of a string to make sure the data is working properly
             });
             return this.linkID = vars;
@@ -682,10 +682,10 @@ let table = new Vue({
                     method: "POST",
                     body: JSON.stringify(newLocs)
                 })
-                .then(function (response) {
+                .then((response) => {
                     return response.json();
                 })
-                .then(function (gameJson) {
+                .then((gameJson) => {
                     if (gameJson.hasOwnProperty('error')) {
                         alert(gameJson.error)
                     } else {
@@ -717,10 +717,10 @@ let table = new Vue({
                             method: 'POST',
                             body: JSON.stringify(newLocs)
                         })
-                        .then(function (response) {
+                        .then((response) => {
                             return response.json
                         })
-                        .then(function (gameJson) {
+                        .then((gameJson) => {
                             if (gameJson.hasOwnProperty("error")) {
                                 alert(gameJson.error)
                             } else {

@@ -22,10 +22,10 @@ let app = new Vue({
             fetch(url, {
                     mode: "cors",
                 })
-                .then(function (response) {
+                .then((response) => {
                     return response.json()
                 })
-                .then(function (gameJson) {
+                .then((gameJson) => {
                     app.gameData = gameJson.games;
                     app.currentPlayer = gameJson.current;
                     app.getScores();
@@ -152,14 +152,14 @@ let app = new Vue({
                         password: this.passInput
                     })
                 })
-                .then(function (data) {
+                .then((data) => {
                     if (data.hasOwnProperty('error')) {
                         alert(data.error)
                     } else {
                         location.reload(true)
                     }
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     console.log('Request failure: ', error);
                 });
         },
@@ -167,10 +167,10 @@ let app = new Vue({
             fetch("/api/logout", {
                     method: "POST",
                 })
-                .then(function (gameJson) {
+                .then((gameJson) => {
                     console.log("Log out success")
                 })
-                .then(function () {
+                .then(() => {
                     location.reload(true)
                 })
                 .catch(error => console.log(error))
@@ -187,7 +187,7 @@ let app = new Vue({
                         password: this.passInput
                     })
                 })
-                .then(function (data) {
+                .then((data) => {
                     if (data.status == 409) {
                         alert("This user already exists")
                     } else if (data.status >= 400) {
@@ -197,7 +197,7 @@ let app = new Vue({
                     }
 
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     console.log("oops something failed ", error);
                 })
         },
@@ -226,10 +226,10 @@ let app = new Vue({
             fetch(url, {
                     method: "POST"
                 })
-                .then(function (response) {
+                .then((response) => {
                     return response.json();
                 })
-                .then(function (data) {
+                .then((data) => {
                     app.gpid = data.gpid;
                     if (data.hasOwnProperty('error')) {
                         alert(data.error)
@@ -246,10 +246,10 @@ let app = new Vue({
             fetch(url, {
                 method:"POST",
             })
-            .then(function (response) {
+            .then((response) => {
                 return response.json();
             })
-            .then(function (gameJson) {
+            .then((gameJson) => {
                 if(gameJson.hasOwnProperty('error')) {
                     alert(gameJson.error)
                 } else {

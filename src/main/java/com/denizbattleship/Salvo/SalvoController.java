@@ -40,6 +40,9 @@ public class SalvoController {
     private SalvoRepository salvoRepository;
 
     @Autowired
+    private ScoreRepository scoreRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
 
@@ -170,8 +173,6 @@ public class SalvoController {
     public ResponseEntity<Map<String, Object>> fireSalvos (@PathVariable Long gamePlayerId, @RequestBody List<String> salvos, Authentication authentication) {
 
         GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).orElse(null);
-        GamePlayer currentGP = gamePlayerRepository.getOne(gamePlayerId);
-        Set<Salvo> firedSalvoes = currentGP.getSalvo();
         Player currentPlayer = getLoggedPlayer(authentication);
         GamePlayer oppSalvoes = opponent(gamePlayer); //gets the opponent
 
@@ -209,10 +210,10 @@ public class SalvoController {
         salvoRepository.save(salvo); //all fired salvoes are saved to the salvo repository
         System.out.println(salvo.getLocations());
 
+        applyScores(makeGameState(gamePlayer), gamePlayer, oppSalvoes, gamePlayer.getGame());
 
         return new ResponseEntity<>(checkInfo("OK", "Salvo locations have been set!"), HttpStatus.CREATED);
     }
-
 
     public Map<String, Object> gamePlayerDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new HashMap<>();
@@ -312,6 +313,7 @@ public class SalvoController {
                     .map(salvo -> salvoDTO(salvo))
                     .collect(toList()));
         }
+        gameInfo.put("stateOfGame", makeGameState(gamePlayer));
         return gameInfo;
     }
 
@@ -428,13 +430,11 @@ public class SalvoController {
         Map<String, String> stateDTO = new HashMap<>();
 
         if(opponent(gamePlayer) == null || gamePlayer.getGame().getGamePlayers().size() == 1) {
-            stateDTO.put("Status", "WAITING");
-            stateDTO.put("Info", "Waiting for an opponent");
+            stateDTO.put("Status", "WAITING for opp");
             return stateDTO;
         }
         if(gamePlayer.getShip().size() == 0 || gamePlayer.getShip().size() < 5) {
-            stateDTO.put("Status", "WAITING");
-            stateDTO.put("Info", "Waiting for user to place ships");
+            stateDTO.put("Status", "WAITING for ships");
             return stateDTO;
         }
 
@@ -442,8 +442,7 @@ public class SalvoController {
             GamePlayer opp = opponent(gamePlayer);
 
             if(opp.getShip().size() == 0 || opp.getShip().size() < 5) {
-                stateDTO.put("Status", "WAITING");
-                stateDTO.put("Info", "Waiting for your opponent to place ships");
+                stateDTO.put("Status", "WAITING opp ships");
                 return stateDTO;
             }
             //check if both sides finished firing
@@ -451,44 +450,38 @@ public class SalvoController {
                 Boolean playerAllShipsSunk = allShipsSunk(gamePlayer);
                 Boolean oppAllShipsSunk = allShipsSunk(opp);
 
-                //player's ships are sunk, opponent wins
-                if(playerAllShipsSunk == true && oppAllShipsSunk == false) {
-                    stateDTO.put("Status", "LOST");
-                    stateDTO.put("Info", "You lost the game");
-                    return stateDTO;
-                }
+                    //player's ships are sunk, opponent wins
+                    if(playerAllShipsSunk == true && oppAllShipsSunk == false) {
+                        stateDTO.put("Status", "LOST");
+                        return stateDTO;
+                    }
 
-                //opponent's ships are sunk, player wins
-                if(playerAllShipsSunk == false && oppAllShipsSunk == true) {
-                    stateDTO.put("Status", "WON");
-                    stateDTO.put("Info", "You won the game");
-                    return stateDTO;
-                }
+                    //opponent's ships are sunk, player wins
+                    if(playerAllShipsSunk == false && oppAllShipsSunk == true) {
+                        stateDTO.put("Status", "WON");
+                        return stateDTO;
+                    }
 
-                //both side's ships are sunk, game is tied
-                if(playerAllShipsSunk == true && oppAllShipsSunk == true) {
-                    stateDTO.put("Status", "TIE");
-                    stateDTO.put("Info", "The game is tied");
-                    return stateDTO;
-                }
+                    //both sides ships are sunk, game is tied
+                    if(playerAllShipsSunk == true && oppAllShipsSunk == true) {
+                        stateDTO.put("Status", "TIE");
+                        return stateDTO;
+                    }
 
-                //game continues if both side's still have functional ships
-                if(playerAllShipsSunk == false && oppAllShipsSunk == false) {
-                    stateDTO.put("Status", "CONTINUE");
-                    stateDTO.put("Info", "Your opponent still has functional ships, continue firing salvos!");
-                    return stateDTO;
-                }
+                    //game continues if both sides still have functional ships
+                    if(playerAllShipsSunk == false && oppAllShipsSunk == false) {
+                        stateDTO.put("Status", "CONTINUE");
+                        return stateDTO;
+                    }
             }
 
             //check if either the player or the opponent is ahead in turns
             if(gamePlayer.getSalvo().size() > opp.getSalvo().size()) {
                 stateDTO.put("Status", "WAITING");
-                stateDTO.put("Info", "Wait for your turn");
                 return stateDTO;
             }
             if(gamePlayer.getSalvo().size() < opp.getSalvo().size()) {
                 stateDTO.put("Status", "CONTINUE");
-                stateDTO.put("Info", "Your opponent is waiting for you to fire");
                 return stateDTO;
             }
         }
@@ -498,7 +491,7 @@ public class SalvoController {
     private Boolean allShipsSunk(GamePlayer gamePlayer) {
         Set<Salvo> oppSalvos = new LinkedHashSet<>(opponent(gamePlayer).getSalvo());
         List<String> allOppSalvoLocs = oppSalvos.stream().flatMap(salvo -> salvo.getLocations().stream()).collect(toList());
-
+        //boolean sunk = false;
         for(Ship ship : gamePlayer.getShip()) {
             List<String> hits = new ArrayList<>(allOppSalvoLocs); //all of the opponent salvo locs are pushed into a new array list
             hits.retainAll(ship.getLocations()); //if the salvos dont hit the ships they get removed from the hits list
@@ -510,6 +503,47 @@ public class SalvoController {
             }
         }
         return true;
+    }
+
+    private void applyScores(Map<String, String> gameState, GamePlayer gamePlayer, GamePlayer opponent, Game currentGame) {
+        String gameStatus = gameState.get("Status");
+
+        if(gamePlayer.getGame().getScores() != null) {
+            return;
+        }
+
+        switch(gameStatus) {
+            case "WON":
+                Score playerWon = new Score(currentGame, gamePlayer.getPlayer(), 1.0);
+                Score oppLost = new Score(currentGame, opponent.getPlayer(), 0.0);
+                gamePlayer.getGame().addScore(playerWon);
+                gamePlayer.getPlayer().addScore(playerWon);
+                opponent.getGame().addScore(oppLost);
+                opponent.getPlayer().addScore(oppLost);
+                scoreRepository.save(playerWon);
+                scoreRepository.save(oppLost);
+                break;
+            case "LOST":
+                Score userLost = new Score(currentGame, gamePlayer.getPlayer(), 0.0);
+                Score oppWon = new Score(currentGame, opponent.getPlayer(), 1.0);
+                gamePlayer.getGame().addScore(userLost);
+                gamePlayer.getPlayer().addScore(userLost);
+                opponent.getGame().addScore(oppWon);
+                opponent.getPlayer().addScore(oppWon);
+                scoreRepository.save(userLost);
+                scoreRepository.save(oppWon);
+                break;
+            case "TIE":
+                Score userTied = new Score(currentGame, gamePlayer.getPlayer(), 0.5);
+                Score oppTied = new Score(currentGame, opponent.getPlayer(), 0.5);
+                gamePlayer.getGame().addScore(userTied);
+                gamePlayer.getPlayer().addScore(userTied);
+                opponent.getGame().addScore(oppTied);
+                opponent.getPlayer().addScore(oppTied);
+                scoreRepository.save(userTied);
+                scoreRepository.save(oppTied);
+                break;
+        }
     }
 
     private Map<String, Object> salvoDTO(Salvo salvo) {

@@ -349,66 +349,66 @@ public class SalvoApplication {
 			salvoRepository.save(salvo21);
 
 
-			Score sc1 = new Score(1.0);
+			Score sc1 = new Score(g1, p1, 1.0);
 			p1.addScore(sc1);
 			g1.addScore(sc1);
 
-			Score sc2 = new Score(0.0);
+			Score sc2 = new Score(g1, p2,0.0);
 			p2.addScore(sc2);
 			g1.addScore(sc2);
 
 
-			Score sc3 = new Score(0.5);
+			Score sc3 = new Score(g2,p1,0.5);
 			p1.addScore(sc3);
 			g2.addScore(sc3);
 
-			Score sc4 = new Score(0.5);
+			Score sc4 = new Score(g2,p2,0.5);
 			p2.addScore(sc4);
 			g2.addScore(sc4);
 
 
-			Score sc5 = new Score(1.0);
+			Score sc5 = new Score(g3,p2,1.0);
 			p2.addScore(sc5);
 			g3.addScore(sc5);
 
-			Score sc6 = new Score(0.0);
+			Score sc6 = new Score(g3,p4,0.0);
 			p4.addScore(sc6);
 			g3.addScore(sc6);
 
 
-			Score sc7 = new Score(0.5);
+			Score sc7 = new Score(g4,p2,0.5);
 			p2.addScore(sc7);
 			g4.addScore(sc7);
 
-			Score sc8 = new Score(0.5);
+			Score sc8 = new Score(g4,p1,0.5);
 			p1.addScore(sc8);
 			g4.addScore(sc8);
 
 
-			Score sc9 = new Score(0.0);
+			Score sc9 = new Score(g5, p4,0.0);
 			p4.addScore(sc9);
 			g5.addScore(sc9);
 
-			Score sc10 = new Score(1.0);
+			Score sc10 = new Score(g5,p1,1.0);
 			p1.addScore(sc10);
 			g5.addScore(sc10);
 
 
-			Score sc11 = new Score(1.0);
+			Score sc11 = new Score(g6,p3,1.0);
 			p3.addScore(sc11);
 			g6.addScore(sc11);
 
 
-			Score sc12 = new Score(0.0);
+			Score sc12 = new Score(g7,p4,0.0);
 			p4.addScore(sc12);
 			g7.addScore(sc12);
 
 
-			Score sc13 = new Score(1.0);
+			Score sc13 = new Score(g8,p3,1.0);
 			p3.addScore(sc13);
 			g8.addScore(sc13);
 
-			Score sc14 = new Score(0.0);
+			Score sc14 = new Score(g8,p4,0.0);
 			p4.addScore(sc14);
 			g8.addScore(sc14);
 

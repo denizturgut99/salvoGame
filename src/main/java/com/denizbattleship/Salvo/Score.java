@@ -28,7 +28,7 @@ public class Score {
 
     public Score(){}
 
-    public Score(Double score) {
+    public Score(Game game, Player player, Double score) {
         this.scores = score;
     }
 

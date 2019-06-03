@@ -145,13 +145,13 @@ public class SalvoController {
         }
 
         if (playerRepository.findByUserName(player.getUserName()) != null) {
-            return new ResponseEntity<>("Name already used", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Name already in use", HttpStatus.CONFLICT);
         }
 
         player.setPassword(passwordEncoder.encode(player.getPassword()));
 
         playerRepository.save(player);
-        return new ResponseEntity<>("Named added", HttpStatus.CREATED);
+        return new ResponseEntity<>("Name added", HttpStatus.CREATED);
     }
 
     @RequestMapping(path="/api/games")
@@ -278,6 +278,7 @@ public class SalvoController {
         if(gamePlayer.getPlayer().getId() != getLoggedPlayer(authentication).getId()) {
             return new ResponseEntity<>(checkInfo("error", "Stop cheating!"), HttpStatus.UNAUTHORIZED);
         } else {
+            applyScores(makeGameState(gamePlayer), gamePlayer, opponent(gamePlayer), gamePlayer.getGame());
             return new ResponseEntity<>(gameViewId(gamePlayerID), HttpStatus.OK);
         }
     }
@@ -507,41 +508,55 @@ public class SalvoController {
 
     private void applyScores(Map<String, String> gameState, GamePlayer gamePlayer, GamePlayer opponent, Game currentGame) {
         String gameStatus = gameState.get("Status");
-
+        /*
         if(gamePlayer.getGame().getScores() != null) {
             return;
         }
-
+        */
         switch(gameStatus) {
             case "WON":
-                Score playerWon = new Score(currentGame, gamePlayer.getPlayer(), 1.0);
-                Score oppLost = new Score(currentGame, opponent.getPlayer(), 0.0);
-                gamePlayer.getGame().addScore(playerWon);
-                gamePlayer.getPlayer().addScore(playerWon);
-                opponent.getGame().addScore(oppLost);
-                opponent.getPlayer().addScore(oppLost);
-                scoreRepository.save(playerWon);
-                scoreRepository.save(oppLost);
+                System.out.println("INSIDE WON");
+                if(gamePlayer.getGame().getScores().size() == 0) {
+                    Score playerWon = new Score(currentGame, gamePlayer.getPlayer(), 1.0);
+                    Score oppLost = new Score(currentGame, opponent.getPlayer(), 0.0);
+                    gamePlayer.getGame().addScore(playerWon);
+                    gamePlayer.getPlayer().addScore(playerWon);
+                    opponent.getGame().addScore(oppLost);
+                    opponent.getPlayer().addScore(oppLost);
+                    scoreRepository.save(playerWon);
+                    scoreRepository.save(oppLost);
+                }
                 break;
             case "LOST":
-                Score userLost = new Score(currentGame, gamePlayer.getPlayer(), 0.0);
-                Score oppWon = new Score(currentGame, opponent.getPlayer(), 1.0);
-                gamePlayer.getGame().addScore(userLost);
-                gamePlayer.getPlayer().addScore(userLost);
-                opponent.getGame().addScore(oppWon);
-                opponent.getPlayer().addScore(oppWon);
-                scoreRepository.save(userLost);
-                scoreRepository.save(oppWon);
+                if(gamePlayer.getGame().getScores().size() == 0) {
+                    Score userLost = new Score(currentGame, gamePlayer.getPlayer(), 0.0);
+                    Score oppWon = new Score(currentGame, opponent.getPlayer(), 1.0);
+                    gamePlayer.getGame().addScore(userLost);
+                    gamePlayer.getPlayer().addScore(userLost);
+                    opponent.getGame().addScore(oppWon);
+                    opponent.getPlayer().addScore(oppWon);
+                    scoreRepository.save(userLost);
+                    scoreRepository.save(oppWon);
+                }
                 break;
             case "TIE":
-                Score userTied = new Score(currentGame, gamePlayer.getPlayer(), 0.5);
-                Score oppTied = new Score(currentGame, opponent.getPlayer(), 0.5);
-                gamePlayer.getGame().addScore(userTied);
-                gamePlayer.getPlayer().addScore(userTied);
-                opponent.getGame().addScore(oppTied);
-                opponent.getPlayer().addScore(oppTied);
-                scoreRepository.save(userTied);
-                scoreRepository.save(oppTied);
+                if(gamePlayer.getGame().getScores().size() == 0) {
+                    Score userTied = new Score(currentGame, gamePlayer.getPlayer(), 0.5);
+                    Score oppTied = new Score(currentGame, opponent.getPlayer(), 0.5);
+                    gamePlayer.getGame().addScore(userTied);
+                    gamePlayer.getPlayer().addScore(userTied);
+                    opponent.getGame().addScore(oppTied);
+                    opponent.getPlayer().addScore(oppTied);
+                    scoreRepository.save(userTied);
+                    scoreRepository.save(oppTied);
+                }
+
+                break;
+            case "CONTINUE":
+                System.out.println("CONTINUE");
+                break;
+            case "WAITING":
+                System.out.println("WAITING");
                 break;
         }
     }

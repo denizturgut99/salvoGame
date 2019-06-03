@@ -1,6 +1,7 @@
 body {
-     background-image: url(plain-black-background.jpeg);
+    background-image: url(plain-black-background.jpeg);
     background-size: cover;
+    position: relative;
 }
 
 table {
@@ -15,7 +16,7 @@ h1 {
     text-align: center;
 }
 
-.gameTable td{
+.gameTable td {
     border: solid 1px rgb(4, 238, 4);
     color: rgb(4, 238, 4);
     width: 40px;
@@ -32,7 +33,7 @@ h1 {
 }
 
 .gameTable .shipColor {
-    background-color: greenyellow ;
+    background-color: greenyellow;
 }
 
 .gameTable .empty {
@@ -52,27 +53,80 @@ h1 {
     background-color: blueviolet;
 }
 
- .spaceBetween {
-     margin-top: 15px;
- }
- .col-sm {
-     padding-right: 2px !important;
-     padding-left: 2px !important; 
- }
+.spaceBetween {
+    margin-top: 15px;
+}
 
- .hitSalvo {
-     background-image: url("./fireEightBit.gif") !important;
-     background-size: cover;
- }
+.col-sm {
+    padding-right: 2px !important;
+    padding-left: 2px !important;
+}
 
- .chooseSalvoLoc {
-     background-color: green;
- }
+.hitSalvo {
+    background-image: url("./fireEightBit.gif") !important;
+    background-size: cover;
+}
 
- .missSalvo {
-     background-color: darkgreen !important;
- }
+.chooseSalvoLoc {
+    background-color: green;
+}
 
- .hide {
-     display: none;
- }
+.missSalvo {
+    background-color: darkgreen !important;
+}
+
+.hide {
+    display: none !important;
+}
+
+.youWon1 {
+    height: 100px;
+    width: 100%;
+    background-color: rgba(24, 221, 34, 0.753);
+    color: greenyellow;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index:1;
+    top: 50%;
+    bottom: 50%;
+    flex-direction: column;
+}
+
+.youLost1 {
+    height: 100px;
+    width: 100%;
+    background-color: rgba(255, 0, 0, 0.753);
+    color: greenyellow;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index:1;
+    top: 50%;
+    bottom: 50%;
+    flex-direction: column;
+}
+
+.youTie1 {
+    height: 100px;
+    width: 100%;
+    background-color: rgba(229, 255, 0, 0.753);
+    color: greenyellow;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index:1;
+    top: 50%;
+    bottom: 50%;
+    flex-direction: column;
+}
+
+.buttonSize {
+    font-size: 15px;
+}

@@ -12,6 +12,7 @@ let table = new Vue({
         shipLocs: [],
         userName: [],
         matchPlayers: [],
+        state:"",
         salvoLocs: [],
         newSalvoLocs: [],
         firedSalvo: 0,
@@ -76,7 +77,7 @@ let table = new Vue({
                         history.go(-1)
                     }
                     table.gameData = gameJson;
-
+                    table.state = table.gameData.game.stateOfGame["Status"]
                     table.shipLocs = table.shipPositions
 
                     if (gameJson.game.ships.length != 0) {
@@ -690,7 +691,6 @@ let table = new Vue({
                         alert(gameJson.error)
                     } else {
                         location.reload(true)
-                        // this.classList.add("hide");
                     }
                 })
                 .catch(error => console.log(error))

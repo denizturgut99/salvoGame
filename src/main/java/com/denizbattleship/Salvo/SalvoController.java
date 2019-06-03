@@ -515,7 +515,6 @@ public class SalvoController {
         */
         switch(gameStatus) {
             case "WON":
-                System.out.println("INSIDE WON");
                 if(gamePlayer.getGame().getScores().size() == 0) {
                     Score playerWon = new Score(currentGame, gamePlayer.getPlayer(), 1.0);
                     Score oppLost = new Score(currentGame, opponent.getPlayer(), 0.0);

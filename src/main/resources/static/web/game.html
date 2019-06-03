@@ -33,72 +33,74 @@
 </head>
 
 <body class="indicator">
-    <div id="app1" class="container indicator">
+    <div id="app1" class="indicator">
+        <div id="youWon" class="youWon1" v-if="state === 'WON'">You Won! <a type="button" class="nes-btn is-success buttonSize" href="games.html">Home</a></div>
+        <div id="youTie" class="youTie1" v-if="state ==='TIE'">Tie! <a type="button" class="nes-btn is-success buttonSize" href="games.html">Home</a></div>
+        <div id="youLost" class="youLost1" v-if="state ==='LOST'">You Lost :( <a type="button" class="nes-btn is-success buttonSize" href="games.html">Home</a></div>
+        <div class="container indicator">
+            <h1>RETROSHIPS</h1>
 
-        <h1>RETROSHIPS</h1>
-
-        <p class="playersTitle"><strong>PLAYERS:</strong></p>
-        <p class="playersTitle" id="players"></p>
-        <div class="row">
-            <div class="col-sm">
-                <h2>Ships</h2>
-                <table id="table1" class="gameTable"></table>
-            </div>
-            <div class="indicator">
-                <p style="font-size: 15px; margin-top:50px;">Your Ships Status</p>
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <p class="container" style="font-size: 10px;" v-for="type in damagedShipType[0]">
-                                {{type}}  
-                            </p>
-                        </div>
-                        <div class="col">
-                            <p class="container" style="font-size: 10px;" v-for="status in damagedShipStatus[0]">
-                                {{status}}
-                            </p>
-                        </div>
-                    </div>
+            <p class="playersTitle"><strong>PLAYERS:</strong></p>
+            <p class="playersTitle" id="players"></p>
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Ships</h2>
+                    <table id="table1" class="gameTable"></table>
                 </div>
-                <!-- <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
-                    {{ship.locations}} </div> -->
-
-                <div class="indicator" v-if="shipLocs.length == 5">
-                    <button id="placeShipButton" type="button" class="nes-btn is-success"
-                        v-on:click="getPlayerShips()">Place
-                        Ships</button>
-                </div>
-                <div class="indicator" v-if="firedSalvo == 5"> <button id="fireSalvoesButton" type="button"
-                        class="nes-btn is-success" v-on:click="sendSalvo()">Fire Salvoes</button>
-                </div>
-
                 <div class="indicator">
-                    <p style="font-size: 15px; margin-top:50px;">Opponent Ship Status</p>
+                    <p style="font-size: 15px; margin-top:50px;">Your Ships Status</p>
                     <div class="container">
                         <div class="row">
                             <div class="col">
-                                <p class="container" style="font-size: 10px;" v-for="type in oppDamagedType[0]">
-                                    {{type}}  
+                                <p class="container" style="font-size: 10px;" v-for="type in damagedShipType[0]">
+                                    {{type}}
                                 </p>
                             </div>
                             <div class="col">
-                                <p class="container" style="font-size: 10px;" v-for="status in oppDamagedStatus[0]">
+                                <p class="container" style="font-size: 10px;" v-for="status in damagedShipStatus[0]">
                                     {{status}}
                                 </p>
                             </div>
                         </div>
                     </div>
+                    <!-- <div class="indicator" style="font-size: 8px;" v-for="ship in shipLocs"> {{ship.type}}
+                    {{ship.locations}} </div> -->
+
+                    <div class="indicator" v-if="gameState === 'placingShips'">
+                        <button id="placeShipButton" type="button" class="nes-btn is-success"
+                            v-on:click="getPlayerShips()">Place Ships</button>
+                    </div>
+                    <div class="indicator" v-if="firedSalvo == 5"> <button id="fireSalvoesButton" type="button"
+                            class="nes-btn is-success" v-on:click="sendSalvo()">Fire Salvoes</button>
+                    </div>
+                    <div class="indicator">
+                        <p style="font-size: 15px; margin-top:50px;">Opponent Ship Status</p>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="container" style="font-size: 10px;" v-for="type in oppDamagedType[0]">
+                                        {{type}}
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <p class="container" style="font-size: 10px;" v-for="status in oppDamagedStatus[0]">
+                                        {{status}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm">
-                <h2>Salvoes</h2>
-                <table id="table2" class="gameTable"></table>
+                <div class="col-sm">
+                    <h2>Salvoes</h2>
+                    <table id="table2" class="gameTable"></table>
+                </div>
             </div>
         </div>
     </div>
     <div class="indicator" style="padding: 50px;">
         <!-- this place is supposed to be empty -->
-    </div>   
+    </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="./scripts/game.js"></script>
 </body>

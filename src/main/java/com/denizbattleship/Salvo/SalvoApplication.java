@@ -42,6 +42,7 @@ public class SalvoApplication {
 	public CommandLineRunner initData(PlayerRepository playerRepository,GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository, ScoreRepository scoreRepository) {
 		return(args) -> {
 
+			/*
 			LocalDateTime d1 = LocalDateTime.now();
 			LocalDateTime d2 = d1.plusMinutes(30);
 			LocalDateTime d3 = d1.plusMinutes(35);
@@ -427,6 +428,7 @@ public class SalvoApplication {
 			scoreRepository.save(sc12);
 			scoreRepository.save(sc13);
 			scoreRepository.save(sc14);
+			*/
 		};
 	}
 }

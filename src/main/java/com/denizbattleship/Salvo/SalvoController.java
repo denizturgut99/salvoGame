@@ -194,7 +194,6 @@ public class SalvoController {
         if(gpTurn > oppTurn) {
             return new ResponseEntity<>(checkInfo("error", "Wait for your opponent to fire their salvoes"), HttpStatus.FORBIDDEN);
         }
-
         Map<String, String> stateOfGame = makeGameState(gamePlayer);
         String statusOfGame = stateOfGame.get("Status");
 

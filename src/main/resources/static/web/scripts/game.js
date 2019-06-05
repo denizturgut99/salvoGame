@@ -13,6 +13,7 @@ let table = new Vue({
         userName: [],
         matchPlayers: [],
         state:"",
+        gameInfo: "",
         salvoLocs: [],
         newSalvoLocs: [],
         firedSalvo: 0,
@@ -77,8 +78,9 @@ let table = new Vue({
                         history.go(-1)
                     }
                     table.gameData = gameJson;
-                    table.state = table.gameData.game.stateOfGame["Status"]
-                    table.shipLocs = table.shipPositions
+                    table.state = table.gameData.game.stateOfGame["Status"];
+                    table.gameInfo = table.gameData.game.stateOfGame["Info"];
+                    table.shipLocs = table.shipPositions;
 
                     if (gameJson.game.ships.length != 0) {
                         table.shipLocs = gameJson.game.ships
@@ -669,10 +671,34 @@ let table = new Vue({
         getPlayerShips() {
             let gamePlayerID = this.linkID.substr(0, 2)
             let newLocs = this.newPositions;
+            let oldLocs = this.shipPositions;
 
             let url = "/api/games/players/" + gamePlayerID + "/ships"
-
-            fetch(url, {
+            if(newLocs.length == 0) {
+                fetch(url, {
+                    credentials: 'include',
+                    mode: 'cors',
+                    cache: 'default',
+                    headers: {
+                        'Accept': 'application/json', //accept is for what we are expecting to receive
+                        'Content-Type': 'application/json'
+                    },
+                    method: "POST",
+                    body: JSON.stringify(oldLocs)
+                })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((gameJson) => {
+                    if (gameJson.hasOwnProperty('error')) {
+                        alert(gameJson.error)
+                    } else {
+                        location.reload(true)
+                    }
+                })
+                .catch(error => console.log(error))
+            } else {
+                fetch(url, {
                     credentials: 'include',
                     mode: 'cors',
                     cache: 'default',
@@ -694,6 +720,7 @@ let table = new Vue({
                     }
                 })
                 .catch(error => console.log(error))
+            }
         },
         sendSalvo() {
             if (table.gameState === "playing") {

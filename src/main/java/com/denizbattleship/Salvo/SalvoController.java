@@ -431,11 +431,13 @@ public class SalvoController {
         Map<String, String> stateDTO = new HashMap<>();
 
         if(opponent(gamePlayer) == null || gamePlayer.getGame().getGamePlayers().size() == 1) {
-            stateDTO.put("Status", "WAITING for opp");
+            stateDTO.put("Status", "WAITING");
+            stateDTO.put("Info", "Waiting for an opponent");
             return stateDTO;
         }
         if(gamePlayer.getShip().size() == 0 || gamePlayer.getShip().size() < 5) {
-            stateDTO.put("Status", "WAITING for ships");
+            stateDTO.put("Status", "WAITING");
+            stateDTO.put("Info", "Waiting for ship placements");
             return stateDTO;
         }
 
@@ -443,7 +445,20 @@ public class SalvoController {
             GamePlayer opp = opponent(gamePlayer);
 
             if(opp.getShip().size() == 0 || opp.getShip().size() < 5) {
-                stateDTO.put("Status", "WAITING opp ships");
+                stateDTO.put("Status", "WAITING");
+                stateDTO.put("Info", "Waiting for opponent to place ships");
+                return stateDTO;
+            }
+
+            if(gamePlayer.getSalvo().size() > opp.getSalvo().size()) {
+                stateDTO.put("Status", "WAITING");
+                stateDTO.put("Info", "Waiting for your opponent to fire salvos");
+                return stateDTO;
+            }
+
+            if(gamePlayer.getSalvo().size() < opp.getSalvo().size()) {
+                stateDTO.put("Status", "CONTINUE");
+                stateDTO.put("Info", "Your opponent is waiting for you to fire your salvos");
                 return stateDTO;
             }
             //check if both sides finished firing
@@ -454,24 +469,28 @@ public class SalvoController {
                     //player's ships are sunk, opponent wins
                     if(playerAllShipsSunk == true && oppAllShipsSunk == false) {
                         stateDTO.put("Status", "LOST");
+                        stateDTO.put("Info", "You lost the game :(");
                         return stateDTO;
                     }
 
                     //opponent's ships are sunk, player wins
                     if(playerAllShipsSunk == false && oppAllShipsSunk == true) {
                         stateDTO.put("Status", "WON");
+                        stateDTO.put("Info", "You won the game!");
                         return stateDTO;
                     }
 
                     //both sides ships are sunk, game is tied
                     if(playerAllShipsSunk == true && oppAllShipsSunk == true) {
                         stateDTO.put("Status", "TIE");
+                        stateDTO.put("Info", "The game is tied :/");
                         return stateDTO;
                     }
 
                     //game continues if both sides still have functional ships
                     if(playerAllShipsSunk == false && oppAllShipsSunk == false) {
                         stateDTO.put("Status", "CONTINUE");
+                        stateDTO.put("Info", "Continue playing");
                         return stateDTO;
                     }
             }
@@ -508,11 +527,7 @@ public class SalvoController {
 
     private void applyScores(Map<String, String> gameState, GamePlayer gamePlayer, GamePlayer opponent, Game currentGame) {
         String gameStatus = gameState.get("Status");
-        /*
-        if(gamePlayer.getGame().getScores() != null) {
-            return;
-        }
-        */
+
         switch(gameStatus) {
             case "WON":
                 if(gamePlayer.getGame().getScores().size() == 0) {

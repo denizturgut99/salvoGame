@@ -155,6 +155,8 @@ let app = new Vue({
                 .then((data) => {
                     if (data.hasOwnProperty('error')) {
                         alert(data.error)
+                    } else if (data.status == 401) {
+                        alert("Check your username or password")
                     } else {
                         location.reload(true)
                     }

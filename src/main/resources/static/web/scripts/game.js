@@ -91,12 +91,18 @@ let table = new Vue({
                     table.userName = gameJson.game.gamePlayer;
                     table.showPlayers();
                     table.gameVersus();
+                    table.refreshPage();
                     table.showShips();
                     table.showSalvoes();
                     table.showOpponentSalvoes();
                     table.showDamagedShips();
                 })
                 .catch(error => console.log(error));
+        },
+        refreshPage() {
+            setInterval(() => {
+                location.reload(true)
+            }, 30000)
         },
         showPlayers() {
             let players = table.userName;
